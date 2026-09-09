@@ -4,14 +4,33 @@ Landing page del negocio de **reparación de electrodomésticos Appliance Soluti
 
 Hecha con **HTML, CSS y JavaScript puro** — sin frameworks, sin dependencias ni paso de compilación.
 
+El sitio es **bilingüe**: inglés por defecto (el mercado principal de Memphis) y español
+como versión alterna, con un selector EN/ES en el header.
+
 ## Estructura
 
 ```
-index.html        Página principal (todas las secciones + sprite de iconos SVG)
-css/styles.css    Estilos (mobile-first, con tokens de color y tipografía)
-js/script.js      Menú, animaciones, carrusel, acordeón y formulario
+index.html        Versión en INGLÉS (principal) — se sirve en /
+es/index.html     Versión en ESPAÑOL — se sirve en /es/
+css/styles.css    Estilos compartidos (mobile-first, con tokens de color y tipografía)
+js/script.js      JS compartido: menú, animaciones, carrusel, acordeón y formulario
 images/           Fondo del hero y favicon (SVG)
 ```
+
+Ambas versiones comparten CSS, JS e imágenes. El JavaScript detecta el idioma con
+`<html lang>` y elige los textos (errores del formulario, etiquetas ARIA, asunto del
+correo) desde un diccionario en `js/script.js`.
+
+### Cómo editar el contenido
+
+El contenido está duplicado a propósito en los dos HTML (sin build ni plantillas).
+**Al cambiar un texto, hay que cambiarlo en los dos archivos** para que las versiones
+no se desincronicen.
+
+### SEO de las dos versiones
+
+Cada archivo lleva su `canonical` y las etiquetas `hreflang` (`en`, `es` y `x-default`
+apuntando al inglés), para que Google indexe ambas sin considerarlas contenido duplicado.
 
 ## Cómo verla
 
@@ -38,7 +57,8 @@ npx http-server -p 8080 .
 2. **Foto del hero** — hoy usa `images/hero-bg.svg`, una ilustración propia como placeholder.
    Reemplazar por una foto real (técnico trabajando) optimizada en `.webp` o `.jpg`
    y actualizar la ruta en `.hero__bg` dentro de `css/styles.css`.
-3. **Imagen Open Graph** — crear una imagen de 1200×630 px y apuntar `og:image` a ella.
+3. **Imagen Open Graph** — crear una imagen de 1200×630 px y apuntar `og:image` a ella
+   (en los dos archivos HTML).
 4. **Formulario** — hoy arma un correo con `mailto:`. Para recibir las solicitudes por
    backend, conectar Formspree, Netlify Forms, EmailJS o un endpoint propio en el
    handler de `#contactForm` (`js/script.js`).
@@ -46,11 +66,12 @@ npx http-server -p 8080 .
    reales de clientes.
 6. **Garantía** — precisar los términos exactos (días/meses y cobertura) en la sección
    "Por Qué Elegirnos" y en la pregunta frecuente correspondiente.
-7. **Dominio** — actualizar `canonical`, `og:url` y el JSON-LD cuando el dominio esté listo.
+7. **Dominio** — actualizar `canonical`, `hreflang`, `og:url` y el JSON-LD en ambos
+   archivos cuando el dominio esté listo.
 
 ## Decisiones técnicas
 
-- **Iconos**: todos en SVG, en un sprite al inicio de `index.html` y referenciados con
+- **Iconos**: todos en SVG, en un sprite al inicio de cada HTML y referenciados con
   `<use href="#i-...">`. No se usan emojis en ninguna parte.
 - **Responsive**: mobile-first, con breakpoints en 600, 768 y 1024 px. Probado en
   375, 768, 1024 y 1440 px sin scroll horizontal.

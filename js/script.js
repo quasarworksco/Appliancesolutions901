@@ -5,6 +5,43 @@
 (function () {
   'use strict';
 
+  /* ---------- TEXTOS SEGÚN EL IDIOMA DE LA PÁGINA ----------
+     El idioma se toma de <html lang="...">: index.html = en, es/index.html = es. */
+  var LANG = (document.documentElement.getAttribute('lang') || 'en').slice(0, 2) === 'es' ? 'es' : 'en';
+  var STRINGS = {
+    en: {
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu',
+      dotLabel: function (i, total) { return 'Go to review ' + i + ' of ' + total; },
+      missing: function (list) { return 'Please add ' + list + '.'; },
+      badEmail: 'Please check your email address — it looks incorrect.',
+      fName: 'your name',
+      fPhone: 'your phone number',
+      fAppliance: 'the appliance type',
+      fMessage: 'a short description of the problem',
+      areaPrefix: 'My area / ZIP code: ',
+      subject: function (appliance, name) { return 'Service request - ' + appliance + ' - ' + name; },
+      mailName: 'Name', mailPhone: 'Phone', mailEmail: 'Email',
+      mailAppliance: 'Appliance', mailMessage: 'Message', mailNone: 'Not provided'
+    },
+    es: {
+      openMenu: 'Abrir menú',
+      closeMenu: 'Cerrar menú',
+      dotLabel: function (i, total) { return 'Ir al testimonio ' + i + ' de ' + total; },
+      missing: function (list) { return 'Falta ' + list + '.'; },
+      badEmail: 'Revisa tu email: parece que tiene un error.',
+      fName: 'tu nombre',
+      fPhone: 'tu teléfono',
+      fAppliance: 'el tipo de electrodoméstico',
+      fMessage: 'una breve descripción del problema',
+      areaPrefix: 'Mi zona / código postal: ',
+      subject: function (appliance, name) { return 'Solicitud de servicio - ' + appliance + ' - ' + name; },
+      mailName: 'Nombre', mailPhone: 'Teléfono', mailEmail: 'Email',
+      mailAppliance: 'Electrodoméstico', mailMessage: 'Mensaje', mailNone: 'No indicado'
+    }
+  };
+  var T = STRINGS[LANG];
+
   /* ---------- MENÚ MÓVIL ---------- */
   var navToggle = document.getElementById('navToggle');
   var primaryNav = document.getElementById('primaryNav');
@@ -13,14 +50,14 @@
     if (!primaryNav || !navToggle) return;
     primaryNav.classList.remove('is-open');
     navToggle.setAttribute('aria-expanded', 'false');
-    navToggle.setAttribute('aria-label', 'Abrir menú');
+    navToggle.setAttribute('aria-label', T.openMenu);
   }
 
   if (navToggle && primaryNav) {
     navToggle.addEventListener('click', function () {
       var isOpen = primaryNav.classList.toggle('is-open');
       navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      navToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+      navToggle.setAttribute('aria-label', isOpen ? T.closeMenu : T.openMenu);
     });
 
     // Cierra el menú al elegir una sección o al presionar Escape
@@ -143,7 +180,7 @@
         var dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'carousel__dot';
-        dot.setAttribute('aria-label', 'Ir al testimonio ' + (i + 1) + ' de ' + total);
+        dot.setAttribute('aria-label', T.dotLabel(i + 1, total));
         dot.dataset.page = i;
         dotsWrap.appendChild(dot);
       }
@@ -268,7 +305,7 @@
         if (match) applianceSelect.value = savedAppliance;
       }
       if (savedZip && messageField && !messageField.value) {
-        messageField.value = 'Mi zona / código postal: ' + savedZip + '. ';
+        messageField.value = T.areaPrefix + savedZip + '. ';
       }
     } catch (err) { /* sessionStorage puede no estar disponible */ }
 
@@ -276,10 +313,10 @@
       e.preventDefault();
 
       var fields = [
-        { el: document.getElementById('fName'), label: 'tu nombre' },
-        { el: document.getElementById('fPhone'), label: 'tu teléfono' },
-        { el: document.getElementById('fAppliance'), label: 'el tipo de electrodoméstico' },
-        { el: document.getElementById('fMessage'), label: 'una breve descripción del problema' }
+        { el: document.getElementById('fName'), label: T.fName },
+        { el: document.getElementById('fPhone'), label: T.fPhone },
+        { el: document.getElementById('fAppliance'), label: T.fAppliance },
+        { el: document.getElementById('fMessage'), label: T.fMessage }
       ];
 
       var missing = [];
@@ -299,8 +336,8 @@
         successBox.hidden = true;
         errorBox.hidden = false;
         errorBox.textContent = emailInvalid && !missing.length
-          ? 'Revisa tu email: parece que tiene un error.'
-          : 'Falta ' + missing.join(', ') + '.';
+          ? T.badEmail
+          : T.missing(missing.join(', '));
         var firstBad = contactForm.querySelector('.has-error');
         if (firstBad) firstBad.focus();
         return;
@@ -310,17 +347,17 @@
 
       var data = new FormData(contactForm);
       var body = [
-        'Nombre: ' + data.get('nombre'),
-        'Teléfono: ' + data.get('telefono'),
-        'Email: ' + (data.get('email') || 'No indicado'),
-        'Electrodoméstico: ' + data.get('electrodomestico'),
+        T.mailName + ': ' + data.get('nombre'),
+        T.mailPhone + ': ' + data.get('telefono'),
+        T.mailEmail + ': ' + (data.get('email') || T.mailNone),
+        T.mailAppliance + ': ' + data.get('electrodomestico'),
         '',
-        'Mensaje:',
+        T.mailMessage + ':',
         data.get('mensaje')
       ].join('\n');
 
       var mailto = 'mailto:Appliancesolutions901@gmail.com'
-        + '?subject=' + encodeURIComponent('Solicitud de servicio - ' + data.get('electrodomestico') + ' - ' + data.get('nombre'))
+        + '?subject=' + encodeURIComponent(T.subject(data.get('electrodomestico'), data.get('nombre')))
         + '&body=' + encodeURIComponent(body);
 
       window.location.href = mailto;
