@@ -74,10 +74,7 @@ npx http-server -p 8080 .
    reales de clientes.
 7. **Garantía** — precisar los términos exactos (días/meses y cobertura) en la sección
    "Por Qué Elegirnos" y en la pregunta frecuente correspondiente.
-8. **Costo de la visita** — la sección "Cuánto Cuesta la Visita" indica $89 pagando el día del
-   servicio y $69 pagando por adelantado. Falta confirmar si ese monto se descuenta del total
-   de la reparación (hay un `TODO` en ambos HTML).
-9. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
+8. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
    (definido en el archivo `CNAME`). Si algún día se cambia a un dominio propio, hay que
    actualizar `canonical`, `hreflang`, `og:url` y el JSON-LD en **ambos** archivos HTML.
 
@@ -96,6 +93,8 @@ npx http-server -p 8080 .
   de `fonts.googleapis.com`, para no bloquear el render con una petición externa.
 - **Líneas de servicio**: además de electrodomésticos, hay una sección de oficios enfocada en
   **electricidad**, con plomería y mantenimiento mencionados en segundo plano.
+- **Costo de la visita**: $89 pagando el día del servicio, $69 pagando por adelantado, y en
+  ambos casos se descuenta del total de la reparación si el cliente aprueba el trabajo.
 - **Derivados del logo**: las variantes transparentes, el favicon, el icono de app y las dos
   imágenes Open Graph se generaron a partir de `images/logo.png`. Si el logo cambia, hay que
   regenerarlas para que todo siga coherente.
