@@ -163,6 +163,14 @@ el panel se convierte en un enlace directo de Google Maps.
 **Al cambiar las reglas hay que publicarlas**: Firebase Console → Firestore Database → Rules,
 pegar el contenido de `firestore.rules` y publicar.
 
+### Página de diagnóstico
+
+`/admin/diagnostico.html` comprueba paso por paso dónde se rompe la conexión: la configuración,
+la descarga del SDK (probando varias versiones), la conexión con el proyecto y una escritura
+real de prueba. Cuando algo falla, muestra el código exacto de Firestore y qué hacer para
+arreglarlo. La solicitud de prueba que crea se llama "PRUEBA DE DIAGNOSTICO" y se borra desde
+el panel con el botón Borrar.
+
 ### Si Firestore falla
 
 El formulario cae automáticamente al envío por `mailto:` que había antes, para que no se
