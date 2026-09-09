@@ -18,7 +18,6 @@ function armarTexto(lead) {
   if (lead.marcaModelo) lineas.push('Marca/modelo: ' + lead.marcaModelo);
   if (lead.email) lineas.push('Email: ' + lead.email);
   if (lead.direccion) lineas.push('Direccion: ' + lead.direccion);
-  if (lead.ubicacion) lineas.push('Ubicacion: https://www.google.com/maps?q=' + lead.ubicacion);
   if (lead.zona) lineas.push('Zona: ' + lead.zona);
   lineas.push('Idioma: ' + (lead.idioma === 'es' ? 'espanol' : 'ingles'));
   if (lead.mensaje) {

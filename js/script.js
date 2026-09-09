@@ -18,18 +18,13 @@
       fName: 'your name',
       fPhone: 'your phone number',
       fAppliance: 'the appliance type',
+      fAddress: 'the address where the appliance is',
       fMessage: 'a short description of the problem',
       areaPrefix: 'My area / ZIP code: ',
       sentOk: 'Got it! Your request is in — we\'ll call you shortly at the number you gave us. Need it sooner? Call 901-686-2035.',
       sentFallback: 'Your email app opened with the details. If it didn\'t, email us at Appliancesolutions901@gmail.com or call 901-686-2035.',
       sending: 'Sending…',
       send: 'Send Request',
-      geoAsking: 'Getting your location…',
-      geoOk: 'Location attached — the technician will know exactly where to go.',
-      geoDenied: 'You blocked location access. No problem: type the address instead.',
-      geoFail: 'We couldn\'t get your location. Type the address instead.',
-      geoUnsupported: 'Your browser does not support this. Type the address instead.',
-      geoDone: 'Location attached',
       subject: function (appliance, name) { return 'Service request - ' + appliance + ' - ' + name; },
       mailName: 'Name', mailPhone: 'Phone', mailEmail: 'Email',
       mailAppliance: 'Appliance', mailMessage: 'Message', mailNone: 'Not provided',
@@ -44,18 +39,13 @@
       fName: 'tu nombre',
       fPhone: 'tu teléfono',
       fAppliance: 'el tipo de electrodoméstico',
+      fAddress: 'la dirección donde está el electrodoméstico',
       fMessage: 'una breve descripción del problema',
       areaPrefix: 'Mi zona / código postal: ',
       sentOk: '¡Listo! Tu solicitud quedó registrada — te llamamos en breve al número que dejaste. ¿Lo necesitas antes? Llámanos al 901-686-2035.',
       sentFallback: 'Se abrió tu correo con los datos. Si no se abrió, escríbenos a Appliancesolutions901@gmail.com o llámanos al 901-686-2035.',
       sending: 'Enviando…',
       send: 'Enviar Solicitud',
-      geoAsking: 'Obteniendo tu ubicación…',
-      geoOk: 'Ubicación adjuntada — el técnico va a saber exactamente a dónde llegar.',
-      geoDenied: 'Bloqueaste el acceso a la ubicación. No hay problema: escribe la dirección.',
-      geoFail: 'No pudimos obtener tu ubicación. Escribe la dirección.',
-      geoUnsupported: 'Tu navegador no lo permite. Escribe la dirección.',
-      geoDone: 'Ubicación adjuntada',
       subject: function (appliance, name) { return 'Solicitud de servicio - ' + appliance + ' - ' + name; },
       mailName: 'Nombre', mailPhone: 'Teléfono', mailEmail: 'Email',
       mailAppliance: 'Electrodoméstico', mailMessage: 'Mensaje', mailNone: 'No indicado',
@@ -310,41 +300,6 @@
   /* TODO: reemplazar el envío por mailto: con un backend real
      (Formspree, Netlify Forms, EmailJS o endpoint propio). */
   var contactForm = document.getElementById('contactForm');
-  var ubicacion = '';   // "lat,lng" si el visitante decide compartirla
-
-  /* Botón de ubicación: siempre opcional y siempre a pedido del visitante */
-  var geoBtn = document.getElementById('geoBtn');
-  var geoStatus = document.getElementById('geoStatus');
-
-  function estadoGeo(texto, error) {
-    if (!geoStatus) return;
-    geoStatus.textContent = texto;
-    geoStatus.classList.toggle('is-error', !!error);
-    geoStatus.hidden = false;
-  }
-
-  if (geoBtn) {
-    geoBtn.addEventListener('click', function () {
-      if (!navigator.geolocation) {
-        estadoGeo(T.geoUnsupported, true);
-        return;
-      }
-      estadoGeo(T.geoAsking, false);
-      navigator.geolocation.getCurrentPosition(
-        function (pos) {
-          ubicacion = pos.coords.latitude.toFixed(6) + ',' + pos.coords.longitude.toFixed(6);
-          estadoGeo(T.geoOk, false);
-          geoBtn.classList.add('is-done');
-          geoBtn.lastChild.textContent = ' ' + T.geoDone;
-        },
-        function (err) {
-          estadoGeo(err && err.code === 1 ? T.geoDenied : T.geoFail, true);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    });
-  }
-
   if (contactForm) {
     var errorBox = document.getElementById('formError');
     var successBox = document.getElementById('formSuccess');
@@ -372,6 +327,7 @@
         { el: document.getElementById('fName'), label: T.fName },
         { el: document.getElementById('fPhone'), label: T.fPhone },
         { el: document.getElementById('fAppliance'), label: T.fAppliance },
+        { el: document.getElementById('fAddress'), label: T.fAddress },
         { el: document.getElementById('fMessage'), label: T.fMessage }
       ];
 
@@ -415,7 +371,7 @@
         T.mailEmail + ': ' + (data.get('email') || T.mailNone),
         T.mailAppliance + ': ' + data.get('electrodomestico'),
         T.mailBrand + ': ' + (data.get('marcaModelo') || T.mailNone),
-        T.mailAddress + ': ' + (data.get('direccion') || (ubicacion ? 'https://www.google.com/maps?q=' + ubicacion : T.mailNone)),
+        T.mailAddress + ': ' + (data.get('direccion') || T.mailNone),
         '',
         T.mailMessage + ':',
         data.get('mensaje')
@@ -460,7 +416,6 @@
         mensaje: data.get('mensaje'),
         marcaModelo: data.get('marcaModelo') || '',
         direccion: data.get('direccion') || '',
-        ubicacion: ubicacion,
         zona: zona,
         idioma: LANG,
         origen: 'formulario-contacto'

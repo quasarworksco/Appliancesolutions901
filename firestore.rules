@@ -28,7 +28,7 @@ service cloud.firestore {
       // El formulario del sitio: solo crear, con la forma exacta esperada
       allow create: if request.resource.data.keys().hasOnly([
                          'nombre', 'telefono', 'email', 'electrodomestico',
-                         'mensaje', 'marcaModelo', 'direccion', 'ubicacion',
+                         'mensaje', 'marcaModelo', 'direccion',
                          'zona', 'idioma', 'origen',
                          'estado', 'notas', 'pagoAdelantado', 'createdAt'
                        ])
@@ -41,7 +41,7 @@ service cloud.firestore {
                     && textoValido(request.resource.data.mensaje, 2000)
                     && textoValido(request.resource.data.marcaModelo, 120)
                     && textoValido(request.resource.data.direccion, 200)
-                    && textoValido(request.resource.data.ubicacion, 60)
+                    && request.resource.data.direccion.size() > 0
                     && textoValido(request.resource.data.zona, 60)
                     && request.resource.data.idioma in ['es', 'en']
                     && textoValido(request.resource.data.origen, 40)

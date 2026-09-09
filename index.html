@@ -971,18 +971,10 @@
                 <input id="fBrand" name="marcaModelo" type="text" placeholder="Ex: Whirlpool WTW5000DW">
               </div>
               <div class="form__field">
-                <label for="fAddress">Address <span class="form__opt">(optional)</span></label>
+                <label for="fAddress">Address <span aria-hidden="true">*</span></label>
                 <input id="fAddress" name="direccion" type="text" autocomplete="street-address"
-                       placeholder="Street, city and ZIP">
+                       required placeholder="Street, city and ZIP code">
               </div>
-            </div>
-
-            <div class="form__geo">
-              <button class="geo" type="button" id="geoBtn">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><use href="#i-pin"></use></svg>
-                Send my location instead
-              </button>
-              <p class="geo__status" id="geoStatus" role="status" hidden></p>
             </div>
 
             <div class="form__field">
