@@ -40,6 +40,29 @@ function soloDigitos(tel) {
   return String(tel || '').replace(/\D/g, '');
 }
 
+function telNormalizado(tel) {
+  const d = soloDigitos(tel);
+  return d.length > 10 ? d.slice(-10) : d;   // ignora el 1 de país
+}
+
+/* Cuántas veces ha escrito este mismo teléfono */
+function vecesQueLlamo(s) {
+  const clave = telNormalizado(s.telefono);
+  if (!clave) return 1;
+  return solicitudes.filter((o) => telNormalizado(o.telefono) === clave).length;
+}
+
+/* Enlace a Google Maps: prefiere las coordenadas exactas si el cliente las mandó */
+function enlaceMapa(s) {
+  if (s.ubicacion) {
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.ubicacion);
+  }
+  // Con solo el código postal no se llega a ninguna casa: mejor no ofrecer el botón
+  if (!s.direccion) return '';
+  const destino = s.direccion + (s.zona && s.direccion.indexOf(s.zona) === -1 ? ' ' + s.zona : '');
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(destino + ' Memphis TN');
+}
+
 function fechaLarga(ts) {
   if (!ts || !ts.toDate) return 'Recién llegada';
   return ts.toDate().toLocaleString('es-US', {
@@ -181,6 +204,8 @@ function filtrar() {
 
 function tarjeta(s) {
   const tel = soloDigitos(s.telefono);
+  const veces = vecesQueLlamo(s);
+  const mapa = enlaceMapa(s);
   const estado = ESTADOS[s.estado] ? s.estado : 'nueva';
   const opciones = Object.keys(ESTADOS)
     .map((k) => `<option value="${k}"${k === estado ? ' selected' : ''}>${ESTADOS[k]}</option>`)
@@ -193,14 +218,18 @@ function tarjeta(s) {
         <h3>${escapar(s.nombre) || 'Sin nombre'}</h3>
         <p class="lead__meta">
           ${escapar(s.electrodomestico) || 'Sin especificar'}
+          ${s.marcaModelo ? '&middot; ' + escapar(s.marcaModelo) : ''}
           &middot; ${fechaLarga(s.createdAt)}
           ${s.zona ? '&middot; Zona ' + escapar(s.zona) : ''}
         </p>
+        ${s.direccion ? `<p class="lead__addr">${escapar(s.direccion)}</p>` : ''}
+        ${!s.direccion && s.ubicacion ? '<p class="lead__addr">Mandó su ubicación exacta</p>' : ''}
       </div>
       <div>
         <span class="chip chip--${estado}">${ESTADOS[estado]}</span>
         <span class="chip chip--lang">${s.idioma === 'es' ? 'ES' : 'EN'}</span>
         ${s.pagoAdelantado ? '<span class="chip chip--paid">Pagó $69</span>' : ''}
+        ${veces > 1 ? `<span class="chip chip--repeat">${veces}ª vez que escribe</span>` : ''}
       </div>
     </div>
 
@@ -216,6 +245,9 @@ function tarjeta(s) {
       ${s.email ? `<a class="act act--mail" href="mailto:${escapar(s.email)}">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#a-mail"></use></svg>
         ${escapar(s.email)}</a>` : ''}
+      ${mapa ? `<a class="act act--map" href="${mapa}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#a-pin"></use></svg>
+        Cómo llegar</a>` : ''}
       <button class="act act--del" type="button" data-accion="borrar">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#a-trash"></use></svg>
         Borrar
@@ -304,6 +336,45 @@ $('leads').addEventListener('click', async (e) => {
     console.error(err);
     avisar('No se pudo borrar la solicitud.');
   }
+});
+
+/* ---------- exportar a Excel ---------- */
+
+function csvSeguro(valor) {
+  const texto = String(valor == null ? '' : valor).replace(/"/g, '""');
+  // Evita que Excel interprete un valor como fórmula
+  const prefijo = /^[=+\-@]/.test(texto) ? "'" : '';
+  return '"' + prefijo + texto + '"';
+}
+
+$('exportBtn').addEventListener('click', () => {
+  const lista = filtrar();
+  if (!lista.length) { avisar('No hay solicitudes que exportar con este filtro.'); return; }
+
+  const cabecera = ['Fecha', 'Nombre', 'Telefono', 'Email', 'Electrodomestico',
+                    'Marca y modelo', 'Direccion', 'Ubicacion', 'Zona', 'Idioma',
+                    'Estado', 'Pago adelantado', 'Mensaje', 'Notas'];
+
+  const filas = lista.map((s) => [
+    s.createdAt && s.createdAt.toDate ? s.createdAt.toDate().toLocaleString('es-US') : '',
+    s.nombre, s.telefono, s.email, s.electrodomestico, s.marcaModelo, s.direccion,
+    s.ubicacion ? 'https://www.google.com/maps?q=' + s.ubicacion : '',
+    s.zona, s.idioma === 'es' ? 'Espanol' : 'Ingles',
+    ESTADOS[s.estado] || s.estado, s.pagoAdelantado ? 'Si' : 'No',
+    s.mensaje, s.notas
+  ].map(csvSeguro).join(','));
+
+  // sep=, y BOM para que Excel abra bien las tildes y las columnas
+  const csv = '\ufeff' + 'sep=,\n' + cabecera.map(csvSeguro).join(',') + '\n' + filas.join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  const a = document.createElement('a');
+  const hoy = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `solicitudes-as901-${hoy}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 
 /* ---------- filtros ---------- */

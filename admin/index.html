@@ -32,6 +32,12 @@
     <symbol id="a-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>
     </symbol>
+    <symbol id="a-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
+    </symbol>
+    <symbol id="a-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 19h16"/>
+    </symbol>
     <symbol id="a-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M4.6 5.2 3 13v6h18v-6l-1.6-7.8a2 2 0 0 0-2-1.6H6.6a2 2 0 0 0-2 1.6z"/>
     </symbol>
@@ -103,7 +109,13 @@
           <button class="tab" type="button" data-estado="terminada" role="tab" aria-selected="false">Terminadas</button>
           <button class="tab" type="button" data-estado="perdida" role="tab" aria-selected="false">Perdidas</button>
         </div>
-        <input class="search" id="search" type="search" placeholder="Buscar por nombre, teléfono o electrodoméstico">
+        <div class="tools__right">
+          <input class="search" id="search" type="search" placeholder="Buscar por nombre, teléfono o electrodoméstico">
+          <button class="btn btn--ghost" type="button" id="exportBtn" title="Descargar lo que se ve como archivo de Excel">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><use href="#a-download"></use></svg>
+            Excel
+          </button>
+        </div>
       </section>
 
       <p class="banner" id="banner" role="alert" hidden></p>

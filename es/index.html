@@ -966,6 +966,26 @@
               </div>
             </div>
 
+            <div class="form__row">
+              <div class="form__field">
+                <label for="fBrand">Marca y modelo <span class="form__opt">(si lo sabes)</span></label>
+                <input id="fBrand" name="marcaModelo" type="text" placeholder="Ej: Whirlpool WTW5000DW">
+              </div>
+              <div class="form__field">
+                <label for="fAddress">Dirección <span class="form__opt">(opcional)</span></label>
+                <input id="fAddress" name="direccion" type="text" autocomplete="street-address"
+                       placeholder="Calle, ciudad y código postal">
+              </div>
+            </div>
+
+            <div class="form__geo">
+              <button class="geo" type="button" id="geoBtn">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><use href="#i-pin"></use></svg>
+                Mejor enviar mi ubicación
+              </button>
+              <p class="geo__status" id="geoStatus" role="status" hidden></p>
+            </div>
+
             <div class="form__field">
               <label for="fMessage">Cuéntanos qué está pasando <span aria-hidden="true">*</span></label>
               <textarea id="fMessage" name="mensaje" rows="4" required placeholder="Ej: la lavadora no drena y hace un ruido fuerte al centrifugar. Zona: 38118."></textarea>
