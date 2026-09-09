@@ -24,3 +24,34 @@ export const ADMIN_EMAIL_DOMAIN = "appliancesolutions901.com";
 
 /* Colección donde se guardan las solicitudes del formulario. */
 export const LEADS_COLLECTION = "leads";
+
+/* =========================================================
+   AVISO DE SOLICITUD NUEVA
+
+   Dos formas de recibir el WhatsApp. Elige una:
+
+   A) RECOMENDADA — a través de Google Apps Script (gratis).
+      Pega la URL del script desplegado en NOTIFY_URL. La clave de
+      CallMeBot queda guardada dentro del script, no en este archivo,
+      así que nadie puede verla ni usarla para llenarte de mensajes.
+      El script además te manda un correo de respaldo.
+
+   B) RÁPIDA — llamando a CallMeBot directamente desde el navegador.
+      Deja NOTIFY_URL vacío y rellena CALLMEBOT. Se configura en dos
+      minutos, PERO la clave queda visible en el código del sitio: quien
+      la encuentre puede mandarte mensajes de WhatsApp a tu número.
+      Úsala solo si no quieres montar el script.
+   ========================================================= */
+
+/* Opción A — URL del Web App de Google Apps Script */
+export const NOTIFY_URL = "";
+
+/* Palabra compartida para que el script ignore peticiones ajenas.
+   Debe ser idéntica a la del Apps Script. */
+export const NOTIFY_TOKEN = "as901-aviso";
+
+/* Opción B — llamada directa a CallMeBot (solo si NOTIFY_URL está vacío) */
+export const CALLMEBOT = {
+  phone: "19016862035",   // tu número con código de país, sin + ni espacios
+  apikey: ""              // la clave que te da CallMeBot al activar el servicio
+};
