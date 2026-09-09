@@ -37,8 +37,9 @@
   var ticking = false;
 
   function onScroll() {
-    if (!header) return;
-    header.classList.toggle('is-scrolled', window.scrollY > 60);
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > 60);
+    var topBtn = document.getElementById('toTop');
+    if (topBtn) topBtn.classList.toggle('is-visible', window.scrollY > 600);
     ticking = false;
   }
   window.addEventListener('scroll', function () {
@@ -333,4 +334,34 @@
       }
     });
   }
+  /* ---------- AÑO DINÁMICO DEL COPYRIGHT ---------- */
+  var yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ---------- BOTÓN VOLVER ARRIBA ---------- */
+  var toTop = document.getElementById('toTop');
+  if (toTop) {
+    toTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  /* ---------- RESALTAR LA SECCIÓN ACTIVA EN EL MENÚ ---------- */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav__link'));
+  var sections = navLinks
+    .map(function (link) { return document.querySelector(link.getAttribute('href')); })
+    .filter(Boolean);
+
+  if (sections.length && 'IntersectionObserver' in window) {
+    var navObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(function (link) {
+          link.classList.toggle('is-active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    sections.forEach(function (section) { navObserver.observe(section); });
+  }
+
 })();
