@@ -627,6 +627,9 @@ button,input,select,textarea{font:inherit;color:inherit;}
   border-color:var(--blue-dark);box-shadow:0 0 0 3px rgba(79,182,232,.25);outline:none;
 }
 .form input.has-error,.form select.has-error,.form textarea.has-error{border-color:var(--red);}
+/* campo trampa: invisible para personas, tentador para bots */
+.form__trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+
 .form__error{
   display:flex;gap:.5rem;margin:0 0 .9rem;padding:.7rem .9rem;border-radius:var(--radius-sm);
   background:var(--red-soft);color:var(--red-dark);font-size:.9rem;font-weight:600;

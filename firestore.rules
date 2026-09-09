@@ -1,0 +1,72 @@
+rules_version = '2';
+
+/* =========================================================
+   Reglas de seguridad de Firestore — Appliance Solutions 901
+
+   Idea central:
+   - Un visitante anónimo del sitio puede CREAR una solicitud y nada más.
+     No puede leerlas, ni listarlas, ni modificarlas, ni borrarlas.
+   - Solo un usuario autenticado (el dueño, desde /admin) administra.
+   - Todo lo que no esté declarado aquí queda bloqueado.
+
+   Cómo aplicarlas: Firebase Console -> Firestore Database -> Rules,
+   pegar este contenido y publicar.
+   ========================================================= */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function esAdmin() {
+      return request.auth != null;
+    }
+
+    function textoValido(campo, maximo) {
+      return campo is string && campo.size() <= maximo;
+    }
+
+    match /leads/{leadId} {
+
+      // El formulario del sitio: solo crear, con la forma exacta esperada
+      allow create: if request.resource.data.keys().hasOnly([
+                         'nombre', 'telefono', 'email', 'electrodomestico',
+                         'mensaje', 'zona', 'idioma', 'origen',
+                         'estado', 'notas', 'pagoAdelantado', 'createdAt'
+                       ])
+                    && textoValido(request.resource.data.nombre, 120)
+                    && request.resource.data.nombre.size() > 0
+                    && textoValido(request.resource.data.telefono, 40)
+                    && request.resource.data.telefono.size() > 0
+                    && textoValido(request.resource.data.email, 160)
+                    && textoValido(request.resource.data.electrodomestico, 60)
+                    && textoValido(request.resource.data.mensaje, 2000)
+                    && textoValido(request.resource.data.zona, 60)
+                    && request.resource.data.idioma in ['es', 'en']
+                    && textoValido(request.resource.data.origen, 40)
+                    // el visitante no elige el estado ni se autoasigna nada
+                    && request.resource.data.estado == 'nueva'
+                    && request.resource.data.notas == ''
+                    && request.resource.data.pagoAdelantado == false
+                    && request.resource.data.createdAt == request.time;
+
+      // Leer y administrar: solo el dueño autenticado
+      allow read: if esAdmin();
+
+      // Al actualizar no se puede reescribir la solicitud original:
+      // el nombre, el teléfono y la fecha quedan como llegaron.
+      allow update: if esAdmin()
+                    && request.resource.data.nombre == resource.data.nombre
+                    && request.resource.data.telefono == resource.data.telefono
+                    && request.resource.data.createdAt == resource.data.createdAt
+                    && request.resource.data.estado in
+                       ['nueva', 'contactada', 'agendada', 'terminada', 'perdida']
+                    && textoValido(request.resource.data.notas, 4000)
+                    && request.resource.data.pagoAdelantado is bool;
+
+      allow delete: if esAdmin();
+    }
+
+    // Cualquier otra colección queda cerrada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

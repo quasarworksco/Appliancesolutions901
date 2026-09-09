@@ -16,6 +16,11 @@ css/styles.css    Estilos compartidos (mobile-first, con tokens de color y tipog
 css/fonts.css     @font-face de las fuentes auto-hospedadas
 fonts/            Inter, Poppins y Chakra Petch (subconjunto latino, .woff2)
 js/script.js      JS compartido: menú, animaciones, carrusel, acordeón y formulario
+js/firebase-config.js  Configuración de Firebase (pública, no es secreta)
+js/leads.js       Guarda las solicitudes del formulario en Firestore
+admin/            Panel privado de solicitudes (/admin)
+firestore.rules   Reglas de seguridad de la base de datos
+robots.txt        Indexación; bloquea /admin/
 images/           Logo, favicon, icono de app, fondo del hero e imágenes Open Graph
 site.webmanifest  Manifiesto para instalar el sitio en el móvil
 CNAME             Dominio del sitio en GitHub Pages
@@ -102,3 +107,53 @@ npx http-server -p 8080 .
 - **Derivados del logo**: las variantes transparentes, el favicon, el icono de app y las dos
   imágenes Open Graph se generaron a partir de `images/logo.png`. Si el logo cambia, hay que
   regenerarlas para que todo siga coherente.
+
+## Panel de solicitudes (`/admin`)
+
+Las solicitudes del formulario se guardan en **Firestore** (proyecto `yeanochoa-4b1c9`) y se
+administran desde `/admin`. El sitio sigue siendo estático en GitHub Pages: Firebase solo
+guarda los datos.
+
+### Cómo entrar
+
+Usuario `yeanochoa` y la contraseña que registraste en Firebase Authentication. El panel le
+agrega el dominio por detrás, así que `yeanochoa` se convierte en
+`yeanochoa@appliancesolutions901.com`. También se acepta el correo completo.
+
+La contraseña **no está en este repositorio**: vive solo en Firebase. Para cambiarla, se hace
+desde Firebase Console → Authentication → Users.
+
+### Qué hace el panel
+
+- Bandeja en **tiempo real**: una solicitud nueva aparece sin recargar la página
+- Estados: Nueva → Contactada → Agendada → Terminada → Perdida
+- Notas internas por solicitud y marca de "pagó por adelantado"
+- Botones directos de llamar, WhatsApp y correo
+- Filtros por estado, búsqueda y contadores (nuevas, de esta semana, agendadas, terminadas)
+
+### Seguridad
+
+- Los valores de `js/firebase-config.js` son **públicos por diseño**; Firebase los expone en
+  el navegador a propósito. La protección real está en `firestore.rules`.
+- Un visitante anónimo **solo puede crear** una solicitud, con la forma exacta validada por las
+  reglas. No puede leer, listar, modificar ni borrar nada.
+- Leer y administrar requiere sesión iniciada. Las reglas además impiden alterar el nombre, el
+  teléfono y la fecha originales de una solicitud ya recibida.
+- El formulario tiene un campo trampa invisible (`company`) para bots. Si llega lleno, la
+  solicitud se descarta en silencio.
+- `robots.txt` bloquea `/admin/` y la página lleva `noindex`.
+
+**Al cambiar las reglas hay que publicarlas**: Firebase Console → Firestore Database → Rules,
+pegar el contenido de `firestore.rules` y publicar.
+
+### Si Firestore falla
+
+El formulario cae automáticamente al envío por `mailto:` que había antes, para que no se
+pierda ninguna solicitud. El visitante ve un mensaje distinto según el caso.
+
+### Pendiente
+
+- **Aviso de solicitud nueva** (correo o WhatsApp al instante): necesita una Cloud Function,
+  y las funciones requieren el plan Blaze de Firebase.
+- **App Check con reCAPTCHA** si algún día llega spam pese al campo trampa.
+- Fase 2 del panel: calendario de citas, historial por cliente e ingresos por trabajo.
