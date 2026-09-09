@@ -130,8 +130,23 @@ desde Firebase Console → Authentication → Users.
 - Bandeja en **tiempo real**: una solicitud nueva aparece sin recargar la página
 - Estados: Nueva → Contactada → Agendada → Terminada → Perdida
 - Notas internas por solicitud y marca de "pagó por adelantado"
-- Botones directos de llamar, WhatsApp y correo
+- Botones directos de llamar, WhatsApp, correo y **Cómo llegar** (Google Maps)
+- **Marca y modelo** del equipo y **dirección** del cliente, si los dio
+- **Cliente repetido**: si el mismo teléfono ya había escrito, lo marca ("2ª vez que escribe")
 - Filtros por estado, búsqueda y contadores (nuevas, de esta semana, agendadas, terminadas)
+- **Exportar a Excel**: descarga lo que se ve en pantalla como CSV, listo para el contador
+
+### El botón "Cómo llegar"
+
+Solo aparece cuando hay a dónde ir. Prefiere las coordenadas exactas si el cliente compartió
+su ubicación; si no, usa la dirección escrita. Con solo el código postal no se muestra, porque
+no llevaría a ninguna casa en concreto.
+
+### Ubicación del cliente
+
+El formulario tiene un botón opcional para compartir la ubicación del navegador. Solo se activa
+si el visitante lo pulsa y acepta el permiso; nunca se pide sola. Se guarda como "lat,lng" y en
+el panel se convierte en un enlace directo de Google Maps.
 
 ### Seguridad
 
