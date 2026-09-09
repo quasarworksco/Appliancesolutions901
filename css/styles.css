@@ -116,7 +116,7 @@ button,input,select,textarea{font:inherit;color:inherit;}
 }
 .logo__text small{flex-basis:100%;font-size:.72rem;font-weight:500;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
 
-.header__actions{display:flex;align-items:center;gap:.75rem;}
+.header__actions{display:flex;align-items:center;gap:.5rem;}
 .header__phone{display:none;align-items:center;gap:.6rem;}
 .header__phone-icon{
   display:grid;place-items:center;width:40px;height:40px;flex:none;
@@ -141,6 +141,19 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .header__burger .icon-close{display:none;}
 .header__burger[aria-expanded="true"] .icon-open{display:none;}
 .header__burger[aria-expanded="true"] .icon-close{display:block;}
+
+/* SELECTOR DE IDIOMA */
+.langswitch{
+  display:inline-flex;align-items:center;flex:none;gap:2px;padding:3px;
+  background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;
+}
+.langswitch__opt{
+  display:grid;place-items:center;min-width:34px;height:28px;padding:0 .5rem;border-radius:999px;
+  font-family:var(--font-head);font-weight:700;font-size:.75rem;letter-spacing:.06em;color:var(--muted);
+  transition:background-color .2s var(--ease),color .2s var(--ease);
+}
+.langswitch__opt:hover{color:var(--ink);}
+.langswitch__opt.is-active{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(214,40,40,.3);}
 
 /* NAVEGACIÓN */
 .nav{background:var(--white);border-bottom:1px solid var(--line);}
@@ -192,11 +205,41 @@ button,input,select,textarea{font:inherit;color:inherit;}
 }
 .hero__inner{padding-block:clamp(2.5rem,7vw,5rem);text-align:center;}
 
+/* Badge de ubicación: pastilla de vidrio con el pin en rojo y latido sutil */
 .hero__eyebrow{
-  display:inline-flex;align-items:center;gap:.45rem;margin:0 0 1rem;
-  padding:.4rem .9rem;border-radius:999px;
-  background:rgba(79,182,232,.18);border:1px solid rgba(79,182,232,.5);
-  color:#CDEBFB;font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:.6rem;margin:0 0 1.15rem;
+  padding:.35rem 1.05rem .35rem .35rem;border-radius:999px;
+  background:linear-gradient(120deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:0 10px 26px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.28);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#fff;font-size:.82rem;
+}
+.hero__eyebrow-icon{
+  position:relative;display:grid;place-items:center;flex:none;width:30px;height:30px;
+  border-radius:50%;background:var(--red);color:#fff;
+  box-shadow:0 4px 12px rgba(214,40,40,.45);
+}
+/* anillo que late para transmitir "estamos activos en tu zona" */
+.hero__eyebrow-icon::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  border:2px solid rgba(214,40,40,.85);
+  animation:pinPulse 2.6s var(--ease) infinite;
+}
+@keyframes pinPulse{
+  0%{transform:scale(1);opacity:.75;}
+  70%{transform:scale(1.85);opacity:0;}
+  100%{transform:scale(1.85);opacity:0;}
+}
+.hero__eyebrow-text{display:inline-flex;align-items:center;gap:.5rem;line-height:1;}
+.hero__eyebrow strong{
+  font-family:var(--font-head);font-weight:700;font-size:.86rem;
+  letter-spacing:.09em;text-transform:uppercase;color:#fff;
+}
+.hero__eyebrow-text > span:last-child{color:rgba(255,255,255,.78);font-weight:500;}
+.hero__eyebrow-dot{
+  width:4px;height:4px;border-radius:50%;flex:none;
+  background:var(--blue);box-shadow:0 0 8px rgba(79,182,232,.9);
 }
 .hero__title{
   color:#fff;font-size:clamp(1.85rem,5.4vw,3.35rem);font-weight:800;
@@ -618,6 +661,7 @@ body{padding-bottom:76px;}
 @media (min-width:768px){
   .header__phone{display:flex;}
   .header__phone-mobile{display:none;}
+  .langswitch__opt{min-width:38px;height:30px;font-size:.78rem;}
   .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem;}
   .testimonial{flex:0 0 calc((100% - 1.1rem) / 2);}
   .steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.75rem;padding-top:46px;}
