@@ -100,46 +100,14 @@ button,input,select,textarea{font:inherit;color:inherit;}
   padding-block:.85rem;transition:padding .25s var(--ease);
 }
 
-/* ---------- LOGO (reproduccion del lockup de marca) ---------- */
+/* ---------- LOGO ---------- */
 .logo{display:inline-flex;align-items:center;min-width:0;}
-.logo__lockup{display:flex;flex-direction:column;align-items:center;gap:.18rem;min-width:0;}
-
-.logo__word{
-  font-family:"Chakra Petch",var(--font-head);font-weight:700;
-  font-size:clamp(1.15rem,4.6vw,1.75rem);line-height:1;letter-spacing:.02em;
-  color:var(--ink);white-space:nowrap;
+.logo__img{
+  display:block;width:clamp(148px,40vw,238px);height:auto;
+  transition:width .25s var(--ease);
 }
-/* la "i" va sin punto (U+0131) y le ponemos el cuadrado rojo del logo */
-.logo__i{position:relative;color:inherit;}
-.logo__i::after{
-  content:"";position:absolute;left:50%;top:-.1em;transform:translateX(-50%);
-  width:.19em;height:.19em;background:var(--red);
-}
-
-.logo__rule{
-  display:flex;align-items:center;gap:.4rem;width:100%;
-  font-family:"Chakra Petch",var(--font-head);font-weight:600;
-  font-size:clamp(.56rem,2.1vw,.74rem);letter-spacing:.34em;color:var(--red);white-space:nowrap;
-}
-.logo__rule::before,.logo__rule::after{
-  content:"";flex:1 1 auto;min-width:.5rem;height:2px;background:var(--red);
-}
-.logo__rule span{padding-left:.34em;}
-
-.logo__tagline{
-  display:flex;align-items:center;justify-content:center;gap:.34rem;
-  font-family:"Chakra Petch",var(--font-head);font-weight:600;
-  font-size:clamp(.44rem,1.6vw,.56rem);letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-2);white-space:nowrap;
-}
-.logo__tagline .is-blue{color:var(--blue-deep);}
-.logo__tagline i{width:1px;height:.8em;background:var(--blue);flex:none;}
-
-/* variante para fondos oscuros (footer) */
-.logo--footer{margin-bottom:1.15rem;}
-.logo--footer .logo__word,.logo--footer .logo__i{color:#fff;}
-.logo--footer .logo__tagline{color:rgba(255,255,255,.8);}
-.logo--footer .logo__tagline .is-blue{color:var(--blue);}
+.logo--footer{display:inline-block;margin-bottom:1.15rem;}
+.logo--footer .logo__img{width:clamp(190px,52vw,265px);}
 
 .header__actions{display:flex;align-items:center;gap:.5rem;}
 .header__phone{display:none;align-items:center;gap:.6rem;}
@@ -214,7 +182,7 @@ button,input,select,textarea{font:inherit;color:inherit;}
 
 /* header comprimido al hacer scroll */
 .header.is-scrolled .header__top-inner{padding-block:.5rem;}
-.header.is-scrolled .logo__tagline{display:none;}
+.header.is-scrolled .logo__img{width:clamp(132px,34vw,200px);}
 .header.is-scrolled .ribbon{display:none;}
 
 /* ---------- HERO ---------- */
@@ -462,6 +430,46 @@ button,input,select,textarea{font:inherit;color:inherit;}
   margin:0;font-family:var(--font-head);font-weight:600;font-size:1.1rem;color:var(--ink);
 }
 
+/* ---------- PRECIO DE LA VISITA ---------- */
+.pricing{background:var(--bg-soft);}
+.pricing__grid{
+  display:grid;grid-template-columns:1fr;gap:1.1rem;max-width:760px;margin-inline:auto;
+}
+.price-card{
+  position:relative;padding:1.8rem 1.5rem;text-align:center;
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.price-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.price-card__label{
+  margin:0 0 .35rem;font-size:.78rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+}
+.price-card__amount{
+  margin:0 0 .55rem;font-family:var(--font-head);font-weight:800;
+  font-size:clamp(2.6rem,9vw,3.4rem);line-height:1;color:var(--ink);
+}
+.price-card__amount span{font-size:.5em;vertical-align:super;margin-right:.06em;color:var(--muted);}
+.price-card__note{margin:0;color:var(--muted);font-size:.94rem;}
+
+.price-card--best{
+  border-color:var(--red);box-shadow:0 12px 34px rgba(214,40,40,.16);
+}
+.price-card--best .price-card__amount{color:var(--red);}
+.price-card__badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  padding:.28rem .8rem;border-radius:999px;background:var(--red);color:#fff;
+  font-family:var(--font-head);font-weight:700;font-size:.72rem;letter-spacing:.08em;
+  text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 12px rgba(214,40,40,.32);
+}
+.pricing__foot{
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  max-width:640px;margin:1.6rem auto 0;text-align:center;
+  font-size:.94rem;color:var(--muted);
+}
+.pricing__foot svg{flex:none;color:var(--green);}
+
 /* ---------- SOBRE NOSOTROS ---------- */
 .about{background:var(--bg-soft);}
 .about__inner{display:grid;grid-template-columns:1fr;gap:2rem;align-items:center;}
@@ -707,10 +715,6 @@ body{padding-bottom:76px;}
 /* =========================================================
    BREAKPOINTS
    ========================================================= */
-@media (max-width:479px){
-  .logo__tagline{display:none;}
-}
-
 @media (min-width:600px){
   .quote{grid-template-columns:1fr 1fr;padding:1.25rem;}
   .quote__submit{grid-column:1 / -1;}
@@ -718,6 +722,7 @@ body{padding-bottom:76px;}
   .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
   .reasons{grid-template-columns:repeat(2,minmax(0,1fr));}
   .cards--duo{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .pricing__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem;}
   .steps__cta{flex-direction:row;justify-content:center;}
   .form__row{grid-template-columns:repeat(2,minmax(0,1fr));}
   .footer__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 2.5rem;}

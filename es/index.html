@@ -44,7 +44,7 @@
   <link rel="preload" href="../fonts/chakra-petch-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../css/fonts.css">
 
-  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../images/favicon-96.png" type="image/png" sizes="96x96">
   <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
   <link rel="manifest" href="../site.webmanifest">
   <link rel="stylesheet" href="../css/styles.css">
@@ -189,13 +189,8 @@
       <div class="container header__top-inner">
 
         <a class="logo" href="#inicio" aria-label="Appliance Solutions 901, inicio">
-          <span class="logo__lockup">
-            <span class="logo__word">APPL<span class="logo__i" aria-hidden="true">ı</span><span class="sr-only">i</span>ANCE</span>
-            <span class="logo__rule"><span>SOLUTIONS 901</span></span>
-            <span class="logo__tagline">
-              <span>Electricidad</span><i aria-hidden="true"></i><span class="is-blue">Plomería</span><i aria-hidden="true"></i><span>Mantenimiento</span>
-            </span>
-          </span>
+          <img class="logo__img" src="../images/logo-dark.png" width="720" height="164"
+               alt="Appliance Solutions 901 — Electricidad, Plomería, Mantenimiento. Memphis, TN" decoding="async" fetchpriority="high">
         </a>
 
         <div class="header__actions">
@@ -605,6 +600,44 @@
       </div>
     </section>
 
+    <!-- ================= PRECIO DE LA VISITA ================= -->
+    <!-- TODO: confirmar si el costo de la visita se descuenta de la reparación y agregar esa línea aquí -->
+    <section class="section pricing" id="precio-visita">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__eyebrow">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#i-tag"></use></svg>
+            Precios Claros
+          </p>
+          <h2>Cuánto Cuesta la Visita</h2>
+          <p class="section__lead">
+            Sin números escondidos. Esto es lo que cuesta que un técnico llegue a tu puerta — y el
+            precio completo de la reparación lo sabes antes de que empiece el trabajo.
+          </p>
+        </header>
+
+        <div class="pricing__grid">
+          <article class="price-card reveal">
+            <p class="price-card__label">Pagas el día de la visita</p>
+            <p class="price-card__amount"><span>$</span>89</p>
+            <p class="price-card__note">Visita pagada con tarjeta cuando el técnico ya está en tu casa.</p>
+          </article>
+
+          <article class="price-card price-card--best reveal">
+            <span class="price-card__badge">Ahorras $20</span>
+            <p class="price-card__label">Pagas por adelantado</p>
+            <p class="price-card__amount"><span>$</span>69</p>
+            <p class="price-card__note">Visita pagada antes de que el técnico salga hacia tu casa.</p>
+          </article>
+        </div>
+
+        <p class="pricing__foot reveal">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><use href="#i-check-circle"></use></svg>
+          La reparación se cotiza aparte y te decimos el precio antes de empezar.
+        </p>
+      </div>
+    </section>
+
     <!-- ================= SOBRE NOSOTROS ================= -->
     <section class="section about" id="sobre-nosotros">
       <div class="container about__inner">
@@ -937,7 +970,7 @@
               </button>
             </h3>
             <div class="faq__a" id="faq4" role="region" aria-labelledby="faq4-btn" hidden>
-              <p>Con lo que nos cuentas por teléfono te damos una idea del costo. Ya en tu casa, revisamos el equipo y te decimos el precio exacto <strong>antes</strong> de empezar. Tú decides si seguimos adelante: sin presión y sin cargos escondidos.</p>
+              <p>La visita cuesta <strong>$89</strong> pagando con tarjeta el día del servicio, o <strong>$69</strong> si pagas antes de que el técnico salga. Con lo que nos cuentas por teléfono te damos una idea del costo de la reparación; ya en tu casa revisamos el equipo y te decimos el precio exacto <strong>antes</strong> de empezar. Tú decides si seguimos adelante: sin presión y sin cargos escondidos.</p>
             </div>
           </div>
 
@@ -977,13 +1010,8 @@
 
       <div class="footer__brand">
         <a class="logo logo--footer" href="#inicio" aria-label="Appliance Solutions 901, inicio">
-          <span class="logo__lockup">
-            <span class="logo__word">APPL<span class="logo__i" aria-hidden="true">ı</span><span class="sr-only">i</span>ANCE</span>
-            <span class="logo__rule"><span>SOLUTIONS 901</span></span>
-            <span class="logo__tagline">
-              <span>Electricidad</span><i aria-hidden="true"></i><span class="is-blue">Plomería</span><i aria-hidden="true"></i><span>Mantenimiento</span>
-            </span>
-          </span>
+          <img class="logo__img" src="../images/logo-white.png" width="720" height="164"
+               alt="Appliance Solutions 901 — Electricidad, Plomería, Mantenimiento. Memphis, TN" decoding="async" loading="lazy">
         </a>
         <p>
           Reparación y mantenimiento de electrodomésticos para casas y negocios de Memphis, TN
@@ -1009,6 +1037,7 @@
           <li><a href="#servicios">Servicios</a></li>
           <li><a href="#por-que-elegirnos">Por Qué Elegirnos</a></li>
           <li><a href="#como-funciona">Cómo Funciona</a></li>
+          <li><a href="#precio-visita">Precio de la Visita</a></li>
           <li><a href="#mas-servicios">Servicios Eléctricos</a></li>
           <li><a href="#testimonios">Testimonios</a></li>
           <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
