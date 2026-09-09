@@ -100,21 +100,46 @@ button,input,select,textarea{font:inherit;color:inherit;}
   padding-block:.85rem;transition:padding .25s var(--ease);
 }
 
-.logo{display:flex;align-items:center;gap:.65rem;min-width:0;}
-.logo__mark{
-  display:grid;place-items:center;flex:none;
-  width:42px;height:42px;border-radius:11px;background:var(--red);color:#fff;
-  box-shadow:0 4px 12px rgba(214,40,40,.3);transition:width .25s var(--ease),height .25s var(--ease);
+/* ---------- LOGO (reproduccion del lockup de marca) ---------- */
+.logo{display:inline-flex;align-items:center;min-width:0;}
+.logo__lockup{display:flex;flex-direction:column;align-items:center;gap:.18rem;min-width:0;}
+
+.logo__word{
+  font-family:"Chakra Petch",var(--font-head);font-weight:700;
+  font-size:clamp(1.15rem,4.6vw,1.75rem);line-height:1;letter-spacing:.02em;
+  color:var(--ink);white-space:nowrap;
 }
-.logo__text{display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem;line-height:1.1;min-width:0;}
-.logo__text strong{
-  font-family:var(--font-head);font-weight:700;font-size:clamp(1rem,2.6vw,1.22rem);color:var(--ink);
+/* la "i" va sin punto (U+0131) y le ponemos el cuadrado rojo del logo */
+.logo__i{position:relative;color:inherit;}
+.logo__i::after{
+  content:"";position:absolute;left:50%;top:-.1em;transform:translateX(-50%);
+  width:.19em;height:.19em;background:var(--red);
 }
-.logo__901{
-  font-family:var(--font-head);font-weight:800;font-size:clamp(1rem,2.6vw,1.22rem);
-  color:var(--red);
+
+.logo__rule{
+  display:flex;align-items:center;gap:.4rem;width:100%;
+  font-family:"Chakra Petch",var(--font-head);font-weight:600;
+  font-size:clamp(.56rem,2.1vw,.74rem);letter-spacing:.34em;color:var(--red);white-space:nowrap;
 }
-.logo__text small{flex-basis:100%;font-size:.72rem;font-weight:500;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.logo__rule::before,.logo__rule::after{
+  content:"";flex:1 1 auto;min-width:.5rem;height:2px;background:var(--red);
+}
+.logo__rule span{padding-left:.34em;}
+
+.logo__tagline{
+  display:flex;align-items:center;justify-content:center;gap:.34rem;
+  font-family:"Chakra Petch",var(--font-head);font-weight:600;
+  font-size:clamp(.44rem,1.6vw,.56rem);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-2);white-space:nowrap;
+}
+.logo__tagline .is-blue{color:var(--blue-deep);}
+.logo__tagline i{width:1px;height:.8em;background:var(--blue);flex:none;}
+
+/* variante para fondos oscuros (footer) */
+.logo--footer{margin-bottom:1.15rem;}
+.logo--footer .logo__word,.logo--footer .logo__i{color:#fff;}
+.logo--footer .logo__tagline{color:rgba(255,255,255,.8);}
+.logo--footer .logo__tagline .is-blue{color:var(--blue);}
 
 .header__actions{display:flex;align-items:center;gap:.5rem;}
 .header__phone{display:none;align-items:center;gap:.6rem;}
@@ -189,8 +214,7 @@ button,input,select,textarea{font:inherit;color:inherit;}
 
 /* header comprimido al hacer scroll */
 .header.is-scrolled .header__top-inner{padding-block:.5rem;}
-.header.is-scrolled .logo__mark{width:36px;height:36px;}
-.header.is-scrolled .logo__text small{display:none;}
+.header.is-scrolled .logo__tagline{display:none;}
 .header.is-scrolled .ribbon{display:none;}
 
 /* ---------- HERO ---------- */
@@ -345,6 +369,21 @@ button,input,select,textarea{font:inherit;color:inherit;}
   transition:gap .2s var(--ease),color .2s var(--ease);
 }
 .card__link:hover{gap:.8rem;color:#fff;}
+
+/* ---------- OFICIOS (ELECTRICIDAD / PLOMERÍA / MANTENIMIENTO) ---------- */
+.section--dark{background:#12212a;color:rgba(255,255,255,.78);}
+.section--dark .section__head h2{color:#fff;}
+.section--dark .section__lead{color:rgba(255,255,255,.75);}
+.section__eyebrow--dark{background:rgba(214,40,40,.18);color:#FF9A9A;}
+.cards--trio{grid-template-columns:1fr;}
+.card--trade{
+  background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);box-shadow:none;
+}
+.card--trade h3{color:#fff;}
+.card--trade p{color:rgba(255,255,255,.74);}
+.card--trade .card__icon{background:rgba(79,182,232,.16);color:#8FD3F4;}
+.card--trade:hover{background:rgba(255,255,255,.08);border-color:transparent;}
+.section--dark .steps__cta p{color:#fff;}
 
 /* ---------- POR QUÉ ELEGIRNOS ---------- */
 .reasons{display:grid;grid-template-columns:1fr;gap:1.1rem;}
@@ -569,8 +608,6 @@ button,input,select,textarea{font:inherit;color:inherit;}
   padding-block:clamp(2.5rem,6vw,3.75rem);
 }
 .logo--footer{margin-bottom:1rem;}
-.logo--footer .logo__text strong{color:#fff;}
-.logo--footer .logo__text small{color:rgba(255,255,255,.6);}
 .footer__brand p{font-size:.95rem;color:rgba(255,255,255,.72);max-width:42ch;}
 
 .footer__social{display:flex;gap:.6rem;margin-top:1.25rem;}
@@ -645,12 +682,17 @@ body{padding-bottom:76px;}
 /* =========================================================
    BREAKPOINTS
    ========================================================= */
+@media (max-width:479px){
+  .logo__tagline{display:none;}
+}
+
 @media (min-width:600px){
   .quote{grid-template-columns:1fr 1fr;padding:1.25rem;}
   .quote__submit{grid-column:1 / -1;}
   .trustbar__inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;}
   .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
   .reasons{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .cards--trio{grid-template-columns:repeat(3,minmax(0,1fr));}
   .steps__cta{flex-direction:row;justify-content:center;}
   .form__row{grid-template-columns:repeat(2,minmax(0,1fr));}
   .footer__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 2.5rem;}
@@ -691,6 +733,7 @@ body{padding-bottom:76px;}
   .hero__ctas .btn{flex:0 1 auto;}
   .trustbar__inner{grid-template-columns:repeat(4,minmax(0,1fr));}
   .cards{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .cards--trio{grid-template-columns:repeat(3,minmax(0,1fr));}
   .reasons{grid-template-columns:repeat(3,minmax(0,1fr));}
   .testimonial{flex:0 0 calc((100% - 2.2rem) / 3);}
   .footer__grid{grid-template-columns:1.5fr 1fr 1.2fr 1.3fr;gap:2.5rem;}
