@@ -20,6 +20,10 @@
       fAppliance: 'the appliance type',
       fMessage: 'a short description of the problem',
       areaPrefix: 'My area / ZIP code: ',
+      sentOk: 'Got it! Your request is in — we\'ll call you shortly at the number you gave us. Need it sooner? Call 901-686-2035.',
+      sentFallback: 'Your email app opened with the details. If it didn\'t, email us at Appliancesolutions901@gmail.com or call 901-686-2035.',
+      sending: 'Sending…',
+      send: 'Send Request',
       subject: function (appliance, name) { return 'Service request - ' + appliance + ' - ' + name; },
       mailName: 'Name', mailPhone: 'Phone', mailEmail: 'Email',
       mailAppliance: 'Appliance', mailMessage: 'Message', mailNone: 'Not provided'
@@ -35,6 +39,10 @@
       fAppliance: 'el tipo de electrodoméstico',
       fMessage: 'una breve descripción del problema',
       areaPrefix: 'Mi zona / código postal: ',
+      sentOk: '¡Listo! Tu solicitud quedó registrada — te llamamos en breve al número que dejaste. ¿Lo necesitas antes? Llámanos al 901-686-2035.',
+      sentFallback: 'Se abrió tu correo con los datos. Si no se abrió, escríbenos a Appliancesolutions901@gmail.com o llámanos al 901-686-2035.',
+      sending: 'Enviando…',
+      send: 'Enviar Solicitud',
       subject: function (appliance, name) { return 'Solicitud de servicio - ' + appliance + ' - ' + name; },
       mailName: 'Nombre', mailPhone: 'Teléfono', mailEmail: 'Email',
       mailAppliance: 'Electrodoméstico', mailMessage: 'Mensaje', mailNone: 'No indicado'
@@ -346,6 +354,13 @@
       errorBox.hidden = true;
 
       var data = new FormData(contactForm);
+
+      // Campo trampa: si viene lleno es un bot. Se finge exito y no se envia nada.
+      if ((data.get('company') || '').trim() !== '') {
+        successBox.hidden = false;
+        return;
+      }
+
       var body = [
         T.mailName + ': ' + data.get('nombre'),
         T.mailPhone + ': ' + data.get('telefono'),
@@ -360,8 +375,49 @@
         + '?subject=' + encodeURIComponent(T.subject(data.get('electrodomestico'), data.get('nombre')))
         + '&body=' + encodeURIComponent(body);
 
-      window.location.href = mailto;
-      successBox.hidden = false;
+      var boton = contactForm.querySelector('button[type=submit]');
+      var textoBoton = boton ? boton.textContent : '';
+      var mensajeExito = successBox.querySelector('span');
+
+      function mostrarExito(texto) {
+        if (mensajeExito) mensajeExito.textContent = texto;
+        successBox.hidden = false;
+        contactForm.reset();
+        if (boton) { boton.disabled = false; boton.textContent = textoBoton; }
+      }
+
+      // Respaldo: si no hay base de datos disponible, se abre el correo
+      function usarCorreo() {
+        window.location.href = mailto;
+        mostrarExito(T.sentFallback);
+      }
+
+      if (!(window.AS901 && window.AS901.saveLead)) {
+        usarCorreo();
+        return;
+      }
+
+      if (boton) { boton.disabled = true; boton.textContent = T.sending; }
+
+      var zona = '';
+      try { zona = sessionStorage.getItem('as901_zip') || ''; } catch (err) { /* sin sessionStorage */ }
+
+      window.AS901.saveLead({
+        nombre: data.get('nombre'),
+        telefono: data.get('telefono'),
+        email: data.get('email') || '',
+        electrodomestico: data.get('electrodomestico'),
+        mensaje: data.get('mensaje'),
+        zona: zona,
+        idioma: LANG,
+        origen: 'formulario-contacto'
+      }).then(function (guardado) {
+        if (guardado) {
+          mostrarExito(T.sentOk);
+        } else {
+          usarCorreo();
+        }
+      });
     });
 
     // Limpia el estado de error al corregir

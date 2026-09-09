@@ -971,6 +971,11 @@
               <textarea id="fMessage" name="mensaje" rows="4" required placeholder="Ej: la lavadora no drena y hace un ruido fuerte al centrifugar. Zona: 38118."></textarea>
             </div>
 
+            <div class="form__trap" aria-hidden="true">
+              <label for="fCompany">Deja este campo vacío</label>
+              <input id="fCompany" name="company" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
             <p class="form__error" id="formError" role="alert" hidden></p>
             <p class="form__success" id="formSuccess" role="status" hidden>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#i-check-circle"></use></svg>
@@ -1200,5 +1205,7 @@
   </button>
 
   <script src="../js/script.js" defer></script>
+  <!-- Guarda las solicitudes en Firestore; si falla, script.js usa el respaldo por correo -->
+  <script type="module" src="../js/leads.js"></script>
 </body>
 </html>
