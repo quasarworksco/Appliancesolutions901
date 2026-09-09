@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Ilustración de una cocina con electrodomésticos y herramientas de reparación">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#20323d"/>
+      <stop offset="100%" stop-color="#0f1a21"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#cfd8de"/>
+      <stop offset="45%" stop-color="#8fa1ad"/>
+      <stop offset="55%" stop-color="#aebcc6"/>
+      <stop offset="100%" stop-color="#768895"/>
+    </linearGradient>
+    <linearGradient id="steel2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b9c6cf"/>
+      <stop offset="50%" stop-color="#8b9ca8"/>
+      <stop offset="100%" stop-color="#6d7f8c"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4FB6E8" stop-opacity=".35"/>
+      <stop offset="100%" stop-color="#4FB6E8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D62828" stop-opacity=".30"/>
+      <stop offset="100%" stop-color="#D62828" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#wall)"/>
+  <circle cx="240" cy="180" r="420" fill="url(#glow)"/>
+  <circle cx="1400" cy="760" r="480" fill="url(#warm)"/>
+
+  <!-- tiled wall -->
+  <g opacity=".10" stroke="#ffffff" stroke-width="2">
+    <path d="M0 120H1600M0 240H1600M0 360H1600M0 480H1600"/>
+    <path d="M120 0V480M360 0V480M600 0V480M840 0V480M1080 0V480M1320 0V480M1560 0V480"/>
+  </g>
+
+  <!-- floor -->
+  <rect y="720" width="1600" height="180" fill="#0a1319"/>
+  <rect y="712" width="1600" height="10" fill="#2a3d49"/>
+
+  <!-- refrigerator -->
+  <g>
+    <rect x="180" y="250" width="300" height="470" rx="16" fill="url(#steel)"/>
+    <rect x="196" y="266" width="268" height="180" rx="10" fill="#7d8f9c" opacity=".55"/>
+    <rect x="196" y="462" width="268" height="242" rx="10" fill="#7d8f9c" opacity=".4"/>
+    <rect x="424" y="300" width="14" height="112" rx="7" fill="#3d4c57"/>
+    <rect x="424" y="496" width="14" height="150" rx="7" fill="#3d4c57"/>
+  </g>
+
+  <!-- washing machine -->
+  <g>
+    <rect x="560" y="380" width="290" height="340" rx="16" fill="url(#steel2)"/>
+    <rect x="580" y="400" width="250" height="48" rx="8" fill="#3d4c57" opacity=".7"/>
+    <circle cx="705" cy="586" r="108" fill="#3d4c57"/>
+    <circle cx="705" cy="586" r="86" fill="#16232b"/>
+    <circle cx="705" cy="586" r="62" fill="#4FB6E8" opacity=".25"/>
+    <circle cx="800" cy="424" r="12" fill="#D62828"/>
+  </g>
+
+  <!-- oven / range -->
+  <g>
+    <rect x="930" y="420" width="300" height="300" rx="14" fill="url(#steel)"/>
+    <rect x="920" y="400" width="320" height="30" rx="10" fill="#5d6f7c"/>
+    <rect x="956" y="470" width="248" height="150" rx="10" fill="#16232b"/>
+    <rect x="972" y="486" width="216" height="118" rx="6" fill="#D62828" opacity=".22"/>
+    <g fill="#3d4c57">
+      <circle cx="976" cy="446" r="9"/><circle cx="1016" cy="446" r="9"/>
+      <circle cx="1144" cy="446" r="9"/><circle cx="1184" cy="446" r="9"/>
+    </g>
+  </g>
+
+  <!-- toolbox -->
+  <g>
+    <rect x="1300" y="612" width="220" height="108" rx="12" fill="#D62828"/>
+    <rect x="1300" y="612" width="220" height="26" rx="12" fill="#A81E1E"/>
+    <rect x="1372" y="576" width="76" height="16" rx="8" fill="#3d4c57"/>
+    <path d="M1372 592c0-18 14-32 38-32s38 14 38 32" fill="none" stroke="#3d4c57" stroke-width="10"/>
+  </g>
+
+  <!-- wrench -->
+  <g transform="rotate(-28 1180 780)" fill="#c8d3da">
+    <rect x="1090" y="768" width="190" height="22" rx="11"/>
+    <path d="M1078 748a34 34 0 1 0 0 62v-16a18 18 0 1 1 0-30z"/>
+    <path d="M1292 748a34 34 0 1 1 0 62v-16a18 18 0 1 0 0-30z"/>
+  </g>
+</svg>
