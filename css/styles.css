@@ -364,6 +364,27 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .trade-lead__list svg{flex:none;margin-top:.15rem;color:var(--blue);}
 .trade-lead__cta{justify-self:start;}
 
+/* segundo oficio (plomeria): mismo formato, acento azul y sin CTA propio */
+.trade-lead--second{
+  margin-top:1.5rem;
+  background:linear-gradient(150deg,rgba(79,182,232,.16),rgba(255,255,255,.05));
+}
+.trade-lead__icon--blue{background:var(--blue-dark);box-shadow:0 8px 22px rgba(27,135,190,.4);}
+
+/* diferenciador: camaras de inspeccion */
+.trade-lead__highlight{
+  display:flex;align-items:flex-start;gap:.85rem;
+  padding:1rem 1.1rem;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.07);border:1px solid rgba(79,182,232,.35);
+}
+.trade-lead__highlight-icon{
+  display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:12px;
+  background:var(--blue);color:#0F2530;
+}
+.trade-lead__highlight p{margin:0;color:rgba(255,255,255,.84);font-size:.95rem;line-height:1.55;}
+.trade-lead__highlight strong{color:#fff;font-family:var(--font-head);}
+
+
 /* los otros dos oficios, en segundo plano */
 .trades__also{
   margin:2.4rem 0 1rem;text-align:center;
@@ -564,8 +585,9 @@ button,input,select,textarea{font:inherit;color:inherit;}
   display:grid;place-items:center;flex:none;width:52px;height:52px;border-radius:14px;
   background:var(--red);color:#fff;box-shadow:0 6px 16px rgba(214,40,40,.28);
 }
-.contact__big:nth-child(2) .contact__big-icon{background:var(--blue-dark);box-shadow:0 6px 16px rgba(27,135,190,.28);}
-.contact__big:nth-child(3) .contact__big-icon{background:var(--ink);box-shadow:0 6px 16px rgba(26,26,26,.22);}
+.contact__big:nth-child(2) .contact__big-icon{background:#1EA94F;box-shadow:0 6px 16px rgba(30,169,79,.28);}
+.contact__big:nth-child(3) .contact__big-icon{background:var(--blue-dark);box-shadow:0 6px 16px rgba(27,135,190,.28);}
+.contact__big:nth-child(4) .contact__big-icon{background:var(--ink);box-shadow:0 6px 16px rgba(26,26,26,.22);}
 .contact__big span span,.contact__big > span:last-child{display:flex;flex-direction:column;min-width:0;}
 .contact__big small{font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
 .contact__big strong{
@@ -695,7 +717,7 @@ button,input,select,textarea{font:inherit;color:inherit;}
 /* Mobile: barra fija inferior · Escritorio: columna fija a la derecha */
 .floating{
   position:fixed;left:0;right:0;bottom:0;z-index:90;
-  display:grid;grid-template-columns:repeat(3,1fr);
+  display:grid;grid-template-columns:repeat(4,1fr);
   background:var(--white);border-top:1px solid var(--line);
   box-shadow:0 -6px 20px rgba(16,32,44,.12);
   padding:.35rem .35rem calc(.35rem + env(safe-area-inset-bottom,0px));
@@ -707,8 +729,10 @@ button,input,select,textarea{font:inherit;color:inherit;}
   transition:transform .2s var(--ease),filter .2s var(--ease);
 }
 .floating__btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+@media (max-width:400px){.floating__btn{font-size:.66rem;padding:.5rem .15rem;}}
 .floating__btn:active{transform:scale(.97);}
 .floating__btn--call{background:var(--red);}
+.floating__btn--wa{background:#1EA94F;}
 .floating__btn--mail{background:var(--blue-dark);}
 .floating__btn--ig{background:var(--ink);}
 .floating__btn:hover{filter:brightness(1.08);}
@@ -736,7 +760,6 @@ body{padding-bottom:76px;}
   .trustbar__inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;}
   .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
   .reasons{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .cards--duo{grid-template-columns:repeat(2,minmax(0,1fr));}
   .pricing__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem;}
   .steps__cta{flex-direction:row;justify-content:center;}
   .form__row{grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -782,7 +805,7 @@ body{padding-bottom:76px;}
   .trade-lead__main{grid-column:1;}
   .trade-lead__list{grid-column:2;grid-row:1 / span 2;align-content:start;}
   .trade-lead__cta{grid-column:1;}
-  .cards--duo{grid-template-columns:repeat(2,minmax(0,1fr));max-width:840px;margin-inline:auto;}
+  .trade-lead--second .trade-lead__highlight{grid-column:1 / -1;}
   .reasons{grid-template-columns:repeat(3,minmax(0,1fr));}
   .testimonial{flex:0 0 calc((100% - 2.2rem) / 3);}
   .footer__grid{grid-template-columns:1.5fr 1fr 1.2fr 1.3fr;gap:2.5rem;}
@@ -791,13 +814,13 @@ body{padding-bottom:76px;}
   body{padding-bottom:0;}
   .floating{
     left:auto;right:0;bottom:auto;top:50%;transform:translateY(-50%);
-    grid-template-columns:1fr;gap:.4rem;padding:.5rem;
+    grid-template-columns:1fr;gap:.35rem;padding:.45rem;
     border-top:0;border:1px solid var(--line);border-right:0;
     border-radius:var(--radius) 0 0 var(--radius);
     box-shadow:-6px 6px 24px rgba(16,32,44,.14);
   }
   .floating__btn{
-    flex-direction:column;width:86px;padding:.7rem .3rem;font-size:.68rem;gap:.3rem;line-height:1.2;
+    flex-direction:column;width:86px;padding:.62rem .3rem;font-size:.68rem;gap:.28rem;line-height:1.2;
   }
   .floating__btn span{white-space:normal;overflow:visible;text-overflow:clip;text-align:center;}
   .floating__btn:hover{transform:translateX(-3px);}
@@ -808,3 +831,6 @@ body{padding-bottom:76px;}
 }
 
 .nowrap{white-space:nowrap;}
+
+/* la tarjeta suelta (mantenimiento) va sola y centrada en todos los tamanos */
+.cards--solo{grid-template-columns:1fr;max-width:540px;margin-inline:auto;}
