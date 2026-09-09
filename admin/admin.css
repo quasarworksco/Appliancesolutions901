@@ -56,6 +56,10 @@ button,input,select,textarea{font:inherit;color:inherit;}
 }
 .login__card input:focus{border-color:var(--blue-deep);box-shadow:0 0 0 3px rgba(79,182,232,.25);outline:none;}
 .login__card .btn{width:100%;padding:.85rem;}
+.login__diag{margin:1rem 0 0;text-align:center;font-size:.85rem;}
+.login__diag a{color:var(--muted);text-decoration:underline;}
+.login__diag a:hover{color:var(--red);}
+
 .login__error{
   margin:0 0 1rem;padding:.65rem .85rem;border-radius:var(--radius-sm);
   background:var(--red-soft);color:var(--red-dark);font-size:.9rem;font-weight:600;
