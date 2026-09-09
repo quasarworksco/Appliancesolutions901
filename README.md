@@ -50,6 +50,7 @@ npx http-server -p 8080 .
 | Dato       | Valor |
 |------------|-------|
 | Teléfono   | [901-686-2035](tel:9016862035) |
+| WhatsApp   | [wa.me/19016862035](https://wa.me/19016862035) |
 | Email      | [Appliancesolutions901@gmail.com](mailto:Appliancesolutions901@gmail.com) |
 | Instagram  | [@appliance_901](https://www.instagram.com/appliance_901) |
 | Cobertura  | Memphis, TN y alrededores (servicio a domicilio) |
@@ -91,8 +92,11 @@ npx http-server -p 8080 .
 - **Movimiento**: todas las animaciones respetan `prefers-reduced-motion`.
 - **Fuentes auto-hospedadas**: se sirven desde `fonts/` (196 KB, subconjunto latino) en vez
   de `fonts.googleapis.com`, para no bloquear el render con una petición externa.
-- **Líneas de servicio**: además de electrodomésticos, hay una sección de oficios enfocada en
-  **electricidad**, con plomería y mantenimiento mencionados en segundo plano.
+- **Líneas de servicio**: además de electrodomésticos, hay una sección de oficios encabezada por
+  **electricidad**, seguida de **plomería** (con el detalle de las cámaras de inspección) y una
+  tarjeta breve de mantenimiento.
+- **WhatsApp**: el 901-686-2035 recibe WhatsApp. Está en los botones flotantes, en la sección de
+  contacto y en el footer, con un mensaje inicial precargado distinto por idioma.
 - **Costo de la visita**: $89 pagando el día del servicio, $69 pagando por adelantado, y en
   ambos casos se descuenta del total de la reparación si el cliente aprueba el trabajo.
 - **Derivados del logo**: las variantes transparentes, el favicon, el icono de app y las dos
