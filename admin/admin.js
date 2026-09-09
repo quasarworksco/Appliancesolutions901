@@ -105,12 +105,22 @@ $('loginForm').addEventListener('submit', async (e) => {
     $('pass').value = '';
   } catch (err) {
     const codigo = err && err.code ? err.code : '';
-    error.textContent =
-      (codigo === 'auth/invalid-credential' || codigo === 'auth/wrong-password' || codigo === 'auth/user-not-found')
-        ? 'Usuario o contraseña incorrectos.'
-        : (codigo === 'auth/too-many-requests')
-          ? 'Demasiados intentos. Espera un momento y vuelve a probar.'
-          : 'No se pudo entrar. Revisa tu conexión e inténtalo otra vez.';
+    const mensajes = {
+      'auth/invalid-credential': 'Usuario o contraseña incorrectos.',
+      'auth/wrong-password': 'Usuario o contraseña incorrectos.',
+      'auth/user-not-found': 'Ese usuario no existe en Firebase Authentication.',
+      'auth/invalid-email': 'El usuario no forma un correo válido.',
+      'auth/too-many-requests': 'Demasiados intentos. Espera un momento y vuelve a probar.',
+      'auth/network-request-failed': 'Sin conexión con Firebase. Revisa tu internet.',
+      'auth/unauthorized-domain':
+        'Este dominio no está autorizado en Firebase. Agrégalo en ' +
+        'Authentication → Settings → Dominios autorizados.',
+      'auth/operation-not-allowed':
+        'Falta habilitar el acceso con correo y contraseña en ' +
+        'Authentication → Sign-in method.'
+    };
+    error.textContent = mensajes[codigo] ||
+      ('No se pudo entrar' + (codigo ? ' (' + codigo + ')' : '') + '. Revisa tu conexión e inténtalo otra vez.');
     error.hidden = false;
   } finally {
     boton.disabled = false;
@@ -142,7 +152,10 @@ function escucharSolicitudes() {
     },
     (err) => {
       console.error(err);
-      avisar('No se pudieron cargar las solicitudes. Revisa las reglas de Firestore y tu conexión.');
+      avisar(err && err.code === 'permission-denied'
+        ? 'Firestore rechazó la lectura. Falta publicar las reglas de firestore.rules en '
+          + 'Firebase Console → Firestore Database → Rules.'
+        : 'No se pudieron cargar las solicitudes. Revisa tu conexión y recarga la página.');
     }
   );
 }
@@ -318,6 +331,7 @@ $('search').addEventListener('input', (e) => {
 cargarFirebase().catch((err) => {
   console.error(err);
   const error = $('loginError');
-  error.textContent = 'No se pudo conectar con Firebase. Revisa tu conexión y recarga la página.';
+  error.textContent = 'No se pudo cargar Firebase (SDK ' + FIREBASE_SDK + '). '
+    + 'Revisa tu conexión; si el problema sigue, cambia FIREBASE_SDK en js/firebase-config.js.';
   error.hidden = false;
 });
