@@ -66,8 +66,9 @@ npx http-server -p 8080 .
    reales de clientes.
 6. **Garantía** — precisar los términos exactos (días/meses y cobertura) en la sección
    "Por Qué Elegirnos" y en la pregunta frecuente correspondiente.
-7. **Dominio** — actualizar `canonical`, `hreflang`, `og:url` y el JSON-LD en ambos
-   archivos cuando el dominio esté listo.
+7. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
+   (definido en el archivo `CNAME`). Si algún día se cambia a un dominio propio, hay que
+   actualizar `canonical`, `hreflang`, `og:url` y el JSON-LD en **ambos** archivos HTML.
 
 ## Decisiones técnicas
 
