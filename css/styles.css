@@ -375,13 +375,38 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .section--dark .section__head h2{color:#fff;}
 .section--dark .section__lead{color:rgba(255,255,255,.75);}
 .section__eyebrow--dark{background:rgba(214,40,40,.18);color:#FF9A9A;}
-.cards--trio{grid-template-columns:1fr;}
-.card--trade{
-  background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);box-shadow:none;
+/* tarjeta principal: electricidad */
+.trade-lead{
+  display:grid;gap:1.4rem;padding:clamp(1.35rem,3vw,2.2rem);
+  background:linear-gradient(150deg,rgba(214,40,40,.16),rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);
 }
-.card--trade h3{color:#fff;}
-.card--trade p{color:rgba(255,255,255,.74);}
-.card--trade .card__icon{background:rgba(79,182,232,.16);color:#8FD3F4;}
+.trade-lead__main{display:flex;align-items:flex-start;gap:1.1rem;}
+.trade-lead__icon{
+  display:grid;place-items:center;flex:none;width:64px;height:64px;border-radius:16px;
+  background:var(--red);color:#fff;box-shadow:0 8px 22px rgba(214,40,40,.4);
+}
+.trade-lead__main h3{color:#fff;font-size:clamp(1.3rem,3.4vw,1.6rem);margin-bottom:.35rem;}
+.trade-lead__main p{margin:0;color:rgba(255,255,255,.8);}
+.trade-lead__list{display:grid;gap:.62rem;}
+.trade-lead__list li{
+  display:flex;align-items:flex-start;gap:.6rem;
+  color:rgba(255,255,255,.86);font-size:.96rem;line-height:1.45;
+}
+.trade-lead__list svg{flex:none;margin-top:.15rem;color:var(--blue);}
+.trade-lead__cta{justify-self:start;}
+
+/* los otros dos oficios, en segundo plano */
+.trades__also{
+  margin:2.4rem 0 1rem;text-align:center;
+  font-family:var(--font-head);font-weight:700;font-size:.76rem;
+  letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);
+}
+.cards--duo{grid-template-columns:1fr;}
+.card--trade{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);box-shadow:none;}
+.card--trade h3{color:#fff;font-size:1.08rem;}
+.card--trade p{color:rgba(255,255,255,.72);font-size:.93rem;}
+.card--trade .card__icon{width:52px;height:52px;background:rgba(79,182,232,.16);color:#8FD3F4;}
 .card--trade:hover{background:rgba(255,255,255,.08);border-color:transparent;}
 .section--dark .steps__cta p{color:#fff;}
 
@@ -692,7 +717,7 @@ body{padding-bottom:76px;}
   .trustbar__inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;}
   .cards{grid-template-columns:repeat(2,minmax(0,1fr));}
   .reasons{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .cards--trio{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .cards--duo{grid-template-columns:repeat(2,minmax(0,1fr));}
   .steps__cta{flex-direction:row;justify-content:center;}
   .form__row{grid-template-columns:repeat(2,minmax(0,1fr));}
   .footer__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 2.5rem;}
@@ -733,7 +758,11 @@ body{padding-bottom:76px;}
   .hero__ctas .btn{flex:0 1 auto;}
   .trustbar__inner{grid-template-columns:repeat(4,minmax(0,1fr));}
   .cards{grid-template-columns:repeat(4,minmax(0,1fr));}
-  .cards--trio{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .trade-lead{grid-template-columns:1.05fr 1fr;column-gap:2.5rem;align-items:start;}
+  .trade-lead__main{grid-column:1;}
+  .trade-lead__list{grid-column:2;grid-row:1 / span 2;align-content:start;}
+  .trade-lead__cta{grid-column:1;}
+  .cards--duo{grid-template-columns:repeat(2,minmax(0,1fr));max-width:840px;margin-inline:auto;}
   .reasons{grid-template-columns:repeat(3,minmax(0,1fr));}
   .testimonial{flex:0 0 calc((100% - 2.2rem) / 3);}
   .footer__grid{grid-template-columns:1.5fr 1fr 1.2fr 1.3fr;gap:2.5rem;}
