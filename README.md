@@ -16,7 +16,7 @@ css/styles.css    Estilos compartidos (mobile-first, con tokens de color y tipog
 css/fonts.css     @font-face de las fuentes auto-hospedadas
 fonts/            Inter, Poppins y Chakra Petch (subconjunto latino, .woff2)
 js/script.js      JS compartido: menú, animaciones, carrusel, acordeón y formulario
-images/           Fondo del hero, favicon, icono de app e imágenes Open Graph
+images/           Logo, favicon, icono de app, fondo del hero e imágenes Open Graph
 site.webmanifest  Manifiesto para instalar el sitio en el móvil
 CNAME             Dominio del sitio en GitHub Pages
 ```
@@ -58,11 +58,10 @@ npx http-server -p 8080 .
 
 1. **Horario de atención** — aún no definido. Hay un `TODO` en el header, en la sección
    "Sobre Nosotros", en el bloque de contacto y en el footer para agregarlo cuando se decida.
-2. **Logo oficial** — el logo del header y del footer es una **reproducción** del logo real,
-   hecha con la tipografía Chakra Petch más los detalles de color (punto rojo sobre la "i",
-   líneas rojas de "SOLUTIONS 901" y la línea ELECTRICAL | PLUMBING | MAINTENANCE).
-   Cuando el archivo original (SVG o PNG con fondo transparente) esté en `images/`,
-   se reemplaza el bloque `.logo__lockup` por un `<img>` en los dos HTML.
+2. **Logo en vectorial** — el sitio usa el logo real (`images/logo.png`), del que se derivaron
+   `logo-dark.png` (para el header claro) y `logo-white.png` (para el footer oscuro), ambos con
+   fondo transparente. Si algún día aparece el archivo vectorial (SVG/AI/EPS), conviene
+   cambiarlo: pesa menos y se ve nítido en cualquier pantalla.
 3. **Foto del hero** — hoy usa `images/hero-bg.svg`, una ilustración propia como placeholder.
    Reemplazar por una foto real (técnico trabajando) optimizada en `.webp` o `.jpg`
    y actualizar la ruta en `.hero__bg` dentro de `css/styles.css`.
@@ -75,7 +74,10 @@ npx http-server -p 8080 .
    reales de clientes.
 7. **Garantía** — precisar los términos exactos (días/meses y cobertura) en la sección
    "Por Qué Elegirnos" y en la pregunta frecuente correspondiente.
-8. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
+8. **Costo de la visita** — la sección "Cuánto Cuesta la Visita" indica $89 pagando el día del
+   servicio y $69 pagando por adelantado. Falta confirmar si ese monto se descuenta del total
+   de la reparación (hay un `TODO` en ambos HTML).
+9. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
    (definido en el archivo `CNAME`). Si algún día se cambia a un dominio propio, hay que
    actualizar `canonical`, `hreflang`, `og:url` y el JSON-LD en **ambos** archivos HTML.
 
@@ -92,5 +94,8 @@ npx http-server -p 8080 .
 - **Movimiento**: todas las animaciones respetan `prefers-reduced-motion`.
 - **Fuentes auto-hospedadas**: se sirven desde `fonts/` (196 KB, subconjunto latino) en vez
   de `fonts.googleapis.com`, para no bloquear el render con una petición externa.
-- **Líneas de servicio**: además de electrodomésticos, el sitio incluye la sección
-  "Electricidad, Plomería y Mantenimiento", tal como declara el logo de la empresa.
+- **Líneas de servicio**: además de electrodomésticos, hay una sección de oficios enfocada en
+  **electricidad**, con plomería y mantenimiento mencionados en segundo plano.
+- **Derivados del logo**: las variantes transparentes, el favicon, el icono de app y las dos
+  imágenes Open Graph se generaron a partir de `images/logo.png`. Si el logo cambia, hay que
+  regenerarlas para que todo siga coherente.

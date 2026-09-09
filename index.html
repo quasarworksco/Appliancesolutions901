@@ -44,7 +44,7 @@
   <link rel="preload" href="fonts/chakra-petch-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/fonts.css">
 
-  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/favicon-96.png" type="image/png" sizes="96x96">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="css/styles.css">
@@ -189,13 +189,8 @@
       <div class="container header__top-inner">
 
         <a class="logo" href="#inicio" aria-label="Appliance Solutions 901, home">
-          <span class="logo__lockup">
-            <span class="logo__word">APPL<span class="logo__i" aria-hidden="true">ı</span><span class="sr-only">i</span>ANCE</span>
-            <span class="logo__rule"><span>SOLUTIONS 901</span></span>
-            <span class="logo__tagline">
-              <span>Electrical</span><i aria-hidden="true"></i><span class="is-blue">Plumbing</span><i aria-hidden="true"></i><span>Maintenance</span>
-            </span>
-          </span>
+          <img class="logo__img" src="images/logo-dark.png" width="720" height="164"
+               alt="Appliance Solutions 901 — Electrical, Plumbing, Maintenance. Memphis, TN" decoding="async" fetchpriority="high">
         </a>
 
         <div class="header__actions">
@@ -605,6 +600,44 @@
       </div>
     </section>
 
+    <!-- ================= SERVICE CALL PRICING ================= -->
+    <!-- TODO: confirm whether the service call applies toward the repair cost, and add that line here -->
+    <section class="section pricing" id="precio-visita">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__eyebrow">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#i-tag"></use></svg>
+            Clear Pricing
+          </p>
+          <h2>What the Service Call Costs</h2>
+          <p class="section__lead">
+            No mystery numbers. This is what it costs to get a technician to your door — and you'll
+            know the full repair price before any work starts.
+          </p>
+        </header>
+
+        <div class="pricing__grid">
+          <article class="price-card reveal">
+            <p class="price-card__label">Pay at the visit</p>
+            <p class="price-card__amount"><span>$</span>89</p>
+            <p class="price-card__note">Service call paid by card when the technician is at your place.</p>
+          </article>
+
+          <article class="price-card price-card--best reveal">
+            <span class="price-card__badge">Save $20</span>
+            <p class="price-card__label">Pay ahead of time</p>
+            <p class="price-card__amount"><span>$</span>69</p>
+            <p class="price-card__note">Service call paid before the technician heads out to you.</p>
+          </article>
+        </div>
+
+        <p class="pricing__foot reveal">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><use href="#i-check-circle"></use></svg>
+          The repair itself is quoted separately, and we tell you the price before we start.
+        </p>
+      </div>
+    </section>
+
     <!-- ================= ABOUT US ================= -->
     <section class="section about" id="sobre-nosotros">
       <div class="container about__inner">
@@ -938,7 +971,7 @@
               </button>
             </h3>
             <div class="faq__a" id="faq4" role="region" aria-labelledby="faq4-btn" hidden>
-              <p>From what you tell us on the phone we give you a ballpark. Once we're at your place, we check the unit and give you the exact price <strong>before</strong> starting. You decide whether we move forward — no pressure and no hidden charges.</p>
+              <p>The service call is <strong>$89</strong> paid by card at the visit, or <strong>$69</strong> if you pay before the technician heads out. From what you tell us on the phone we give you a ballpark for the repair; once we're at your place we check the unit and give you the exact price <strong>before</strong> starting. You decide whether we move forward — no pressure and no hidden charges.</p>
             </div>
           </div>
 
@@ -978,13 +1011,8 @@
 
       <div class="footer__brand">
         <a class="logo logo--footer" href="#inicio" aria-label="Appliance Solutions 901, home">
-          <span class="logo__lockup">
-            <span class="logo__word">APPL<span class="logo__i" aria-hidden="true">ı</span><span class="sr-only">i</span>ANCE</span>
-            <span class="logo__rule"><span>SOLUTIONS 901</span></span>
-            <span class="logo__tagline">
-              <span>Electrical</span><i aria-hidden="true"></i><span class="is-blue">Plumbing</span><i aria-hidden="true"></i><span>Maintenance</span>
-            </span>
-          </span>
+          <img class="logo__img" src="images/logo-white.png" width="720" height="164"
+               alt="Appliance Solutions 901 — Electrical, Plumbing, Maintenance. Memphis, TN" decoding="async" loading="lazy">
         </a>
         <p>
           Appliance repair and maintenance for homes and businesses across Memphis, TN and the
@@ -1010,6 +1038,7 @@
           <li><a href="#servicios">Services</a></li>
           <li><a href="#por-que-elegirnos">Why Choose Us</a></li>
           <li><a href="#como-funciona">How It Works</a></li>
+          <li><a href="#precio-visita">Service Call Pricing</a></li>
           <li><a href="#mas-servicios">Electrical Services</a></li>
           <li><a href="#testimonios">Reviews</a></li>
           <li><a href="#sobre-nosotros">About Us</a></li>
