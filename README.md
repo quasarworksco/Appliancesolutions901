@@ -18,6 +18,8 @@ fonts/            Inter, Poppins y Chakra Petch (subconjunto latino, .woff2)
 js/script.js      JS compartido: menú, animaciones, carrusel, acordeón y formulario
 js/firebase-config.js  Configuración de Firebase (pública, no es secreta)
 js/leads.js       Guarda las solicitudes del formulario en Firestore
+js/notify.js      Avisa por WhatsApp y correo cuando entra una solicitud
+apps-script/      Script de Google que reenvía el aviso (gratis, sin tarjeta)
 admin/            Panel privado de solicitudes (/admin)
 firestore.rules   Reglas de seguridad de la base de datos
 robots.txt        Indexación; bloquea /admin/
@@ -151,9 +153,44 @@ pegar el contenido de `firestore.rules` y publicar.
 El formulario cae automáticamente al envío por `mailto:` que había antes, para que no se
 pierda ninguna solicitud. El visitante ve un mensaje distinto según el caso.
 
-### Pendiente
+## Aviso de solicitud nueva (WhatsApp y correo)
 
-- **Aviso de solicitud nueva** (correo o WhatsApp al instante): necesita una Cloud Function,
-  y las funciones requieren el plan Blaze de Firebase.
+Cuando una solicitud queda guardada, el sitio dispara un aviso. Es opcional: si falla o no
+está configurado, la solicitud igual está guardada y aparece en `/admin`.
+
+Se configura en `js/firebase-config.js`. Hay dos formas, elige una:
+
+### Opción A — Google Apps Script (recomendada)
+
+La clave de CallMeBot vive dentro del script de Google, no en el código público del sitio.
+Además manda un correo de respaldo y puede copiar cada solicitud a una Google Sheet.
+
+1. Consigue tu clave de CallMeBot siguiendo los pasos de
+   https://www.callmebot.com/blog/free-api-whatsapp-messages/
+2. Abre https://script.google.com, crea un proyecto y pega `apps-script/Codigo.gs`
+3. Rellena `CALLMEBOT_APIKEY`, `EMAIL_TO` y, si quieres, `SHEET_ID`
+4. Implementar → Nueva implementación → Aplicación web
+   (ejecutar como: **yo**; acceso: **cualquier usuario**)
+5. Copia la URL que termina en `/exec` y pégala en `NOTIFY_URL`
+
+Para probar, ejecuta la función `prueba()` desde el editor de Apps Script.
+
+### Opción B — CallMeBot directo desde el navegador
+
+Deja `NOTIFY_URL` vacío y rellena `CALLMEBOT.apikey`. Se configura en dos minutos.
+
+**Advertencia:** la clave queda visible en el código del sitio. Quien la encuentre puede
+enviarte mensajes de WhatsApp. La clave se puede cambiar volviendo a activar el servicio.
+
+### Límites
+
+- CallMeBot es un servicio no oficial y gratuito: puede fallar o cambiar sin aviso. Por eso
+  el correo de la opción A sirve de respaldo.
+- Apps Script envía hasta unos 100 correos al día con una cuenta de Gmail normal.
+
+## Pendiente
+
 - **App Check con reCAPTCHA** si algún día llega spam pese al campo trampa.
 - Fase 2 del panel: calendario de citas, historial por cliente e ingresos por trabajo.
+- Cloud Functions (aviso nativo de Firestore) si algún día se pasa al plan Blaze: en este
+  volumen costaría $0, pero exige registrar una tarjeta.

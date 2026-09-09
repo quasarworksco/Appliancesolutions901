@@ -7,6 +7,7 @@
    así no se pierde ninguna solicitud.
    ========================================================= */
 import { firebaseConfig, FIREBASE_SDK, LEADS_COLLECTION } from './firebase-config.js';
+import { notifyNewLead } from './notify.js';
 
 const CDN = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK}`;
 
@@ -37,7 +38,7 @@ async function saveLead(datos) {
     const { db, firestore } = await getDb();
     const { collection, addDoc, serverTimestamp } = firestore;
 
-    await addDoc(collection(db, LEADS_COLLECTION), {
+    const datosLead = {
       nombre: recortar(datos.nombre, 120),
       telefono: recortar(datos.telefono, 40),
       email: recortar(datos.email, 160),
@@ -50,7 +51,13 @@ async function saveLead(datos) {
       notas: '',
       pagoAdelantado: false,
       createdAt: serverTimestamp()
-    });
+    };
+
+    await addDoc(collection(db, LEADS_COLLECTION), datosLead);
+
+    // Aviso al dueño. Va después de guardar y no bloquea la respuesta.
+    notifyNewLead(datosLead);
+
     return true;
   } catch (err) {
     console.error('[AS901] No se pudo guardar la solicitud en Firestore:', err);
