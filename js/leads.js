@@ -46,7 +46,6 @@ async function saveLead(datos) {
       mensaje: recortar(datos.mensaje, 2000),
       marcaModelo: recortar(datos.marcaModelo, 120),
       direccion: recortar(datos.direccion, 200),
-      ubicacion: recortar(datos.ubicacion, 60),
       zona: recortar(datos.zona, 60),
       idioma: datos.idioma === 'es' ? 'es' : 'en',
       origen: recortar(datos.origen || 'formulario-contacto', 40),

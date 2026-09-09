@@ -52,11 +52,8 @@ function vecesQueLlamo(s) {
   return solicitudes.filter((o) => telNormalizado(o.telefono) === clave).length;
 }
 
-/* Enlace a Google Maps: prefiere las coordenadas exactas si el cliente las mandó */
+/* Enlace a Google Maps con la dirección que escribió el cliente */
 function enlaceMapa(s) {
-  if (s.ubicacion) {
-    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.ubicacion);
-  }
   // Con solo el código postal no se llega a ninguna casa: mejor no ofrecer el botón
   if (!s.direccion) return '';
   const destino = s.direccion + (s.zona && s.direccion.indexOf(s.zona) === -1 ? ' ' + s.zona : '');
@@ -223,7 +220,6 @@ function tarjeta(s) {
           ${s.zona ? '&middot; Zona ' + escapar(s.zona) : ''}
         </p>
         ${s.direccion ? `<p class="lead__addr">${escapar(s.direccion)}</p>` : ''}
-        ${!s.direccion && s.ubicacion ? '<p class="lead__addr">Mandó su ubicación exacta</p>' : ''}
       </div>
       <div>
         <span class="chip chip--${estado}">${ESTADOS[estado]}</span>
@@ -352,13 +348,12 @@ $('exportBtn').addEventListener('click', () => {
   if (!lista.length) { avisar('No hay solicitudes que exportar con este filtro.'); return; }
 
   const cabecera = ['Fecha', 'Nombre', 'Telefono', 'Email', 'Electrodomestico',
-                    'Marca y modelo', 'Direccion', 'Ubicacion', 'Zona', 'Idioma',
+                    'Marca y modelo', 'Direccion', 'Zona', 'Idioma',
                     'Estado', 'Pago adelantado', 'Mensaje', 'Notas'];
 
   const filas = lista.map((s) => [
     s.createdAt && s.createdAt.toDate ? s.createdAt.toDate().toLocaleString('es-US') : '',
     s.nombre, s.telefono, s.email, s.electrodomestico, s.marcaModelo, s.direccion,
-    s.ubicacion ? 'https://www.google.com/maps?q=' + s.ubicacion : '',
     s.zona, s.idioma === 'es' ? 'Espanol' : 'Ingles',
     ESTADOS[s.estado] || s.estado, s.pagoAdelantado ? 'Si' : 'No',
     s.mensaje, s.notas
