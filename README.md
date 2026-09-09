@@ -13,8 +13,12 @@ como versión alterna, con un selector EN/ES en el header.
 index.html        Versión en INGLÉS (principal) — se sirve en /
 es/index.html     Versión en ESPAÑOL — se sirve en /es/
 css/styles.css    Estilos compartidos (mobile-first, con tokens de color y tipografía)
+css/fonts.css     @font-face de las fuentes auto-hospedadas
+fonts/            Inter, Poppins y Chakra Petch (subconjunto latino, .woff2)
 js/script.js      JS compartido: menú, animaciones, carrusel, acordeón y formulario
-images/           Fondo del hero y favicon (SVG)
+images/           Fondo del hero, favicon, icono de app e imágenes Open Graph
+site.webmanifest  Manifiesto para instalar el sitio en el móvil
+CNAME             Dominio del sitio en GitHub Pages
 ```
 
 Ambas versiones comparten CSS, JS e imágenes. El JavaScript detecta el idioma con
@@ -54,19 +58,24 @@ npx http-server -p 8080 .
 
 1. **Horario de atención** — aún no definido. Hay un `TODO` en el header, en la sección
    "Sobre Nosotros", en el bloque de contacto y en el footer para agregarlo cuando se decida.
-2. **Foto del hero** — hoy usa `images/hero-bg.svg`, una ilustración propia como placeholder.
+2. **Logo oficial** — el logo del header y del footer es una **reproducción** del logo real,
+   hecha con la tipografía Chakra Petch más los detalles de color (punto rojo sobre la "i",
+   líneas rojas de "SOLUTIONS 901" y la línea ELECTRICAL | PLUMBING | MAINTENANCE).
+   Cuando el archivo original (SVG o PNG con fondo transparente) esté en `images/`,
+   se reemplaza el bloque `.logo__lockup` por un `<img>` en los dos HTML.
+3. **Foto del hero** — hoy usa `images/hero-bg.svg`, una ilustración propia como placeholder.
    Reemplazar por una foto real (técnico trabajando) optimizada en `.webp` o `.jpg`
    y actualizar la ruta en `.hero__bg` dentro de `css/styles.css`.
-3. **Imagen Open Graph** — crear una imagen de 1200×630 px y apuntar `og:image` a ella
-   (en los dos archivos HTML).
-4. **Formulario** — hoy arma un correo con `mailto:`. Para recibir las solicitudes por
+4. **Imagen Open Graph** — ya generada (`images/og-image.png` en inglés y
+   `images/og-image-es.png` en español). Si cambia el logo, conviene regenerarlas.
+5. **Formulario** — hoy arma un correo con `mailto:`. Para recibir las solicitudes por
    backend, conectar Formspree, Netlify Forms, EmailJS o un endpoint propio en el
    handler de `#contactForm` (`js/script.js`).
-5. **Testimonios** — los cuatro que aparecen son de ejemplo. Reemplazarlos por reseñas
+6. **Testimonios** — los cuatro que aparecen son de ejemplo. Reemplazarlos por reseñas
    reales de clientes.
-6. **Garantía** — precisar los términos exactos (días/meses y cobertura) en la sección
+7. **Garantía** — precisar los términos exactos (días/meses y cobertura) en la sección
    "Por Qué Elegirnos" y en la pregunta frecuente correspondiente.
-7. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
+8. **Dominio** — el sitio se publica en `https://appliancesolutions901.dgp-link.com`
    (definido en el archivo `CNAME`). Si algún día se cambia a un dominio propio, hay que
    actualizar `canonical`, `hreflang`, `og:url` y el JSON-LD en **ambos** archivos HTML.
 
@@ -81,3 +90,7 @@ npx http-server -p 8080 .
 - **Accesibilidad**: skip link, foco visible, `aria-label`/`aria-expanded` en menú,
   acordeón y carrusel, y contrastes verificados contra WCAG AA.
 - **Movimiento**: todas las animaciones respetan `prefers-reduced-motion`.
+- **Fuentes auto-hospedadas**: se sirven desde `fonts/` (196 KB, subconjunto latino) en vez
+  de `fonts.googleapis.com`, para no bloquear el render con una petición externa.
+- **Líneas de servicio**: además de electrodomésticos, el sitio incluye la sección
+  "Electricidad, Plomería y Mantenimiento", tal como declara el logo de la empresa.
