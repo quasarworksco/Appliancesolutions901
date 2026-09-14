@@ -200,10 +200,13 @@ Para probar, ejecuta la función `prueba()` desde el editor de Apps Script.
 #### Telegram
 
 1. Habla con **@BotFather** en Telegram, manda `/newbot` y guarda el token
-2. Agrega el bot a tu grupo y escribe cualquier mensaje ahí
-3. Pega el token en `TELEGRAM_TOKEN` y ejecuta la función **`obtenerChatId()`**:
-   el registro te muestra el id del grupo (empieza con guión)
-4. Pégalo en `TELEGRAM_CHAT_ID`
+2. Pega el token en `TELEGRAM_TOKEN`
+3. Agrega el bot a tu grupo
+
+El id del grupo **no hay que buscarlo**: Telegram avisa cuando agregan al bot a un grupo, y el
+script detecta ese aviso la primera vez que envía algo y lo guarda en las propiedades del
+proyecto. `obtenerChatId()` sirve solo para comprobar que ya lo sabe, y `olvidarGrupo()` para
+que vuelva a detectarlo si cambias de grupo.
 
 El mensaje llega con nombre, teléfono con enlace de llamada, enlace de WhatsApp, equipo,
 marca y modelo, dirección con enlace a Google Maps, el mensaje del cliente y el idioma.
