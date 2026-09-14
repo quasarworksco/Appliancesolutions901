@@ -838,5 +838,9 @@ body{padding-bottom:76px;}
 
 .nowrap{white-space:nowrap;}
 
+/* rotaciones de iconos (antes iban en atributos style, que impiden un CSP estricto) */
+.icon-flip{transform:rotate(180deg);}
+.icon-up{transform:rotate(-90deg);}
+
 /* la tarjeta suelta (mantenimiento) va sola y centrada en todos los tamanos */
 .cards--solo{grid-template-columns:1fr;max-width:540px;margin-inline:auto;}

@@ -62,6 +62,42 @@ npx http-server -p 8080 .
 | Instagram  | [@appliance_901](https://www.instagram.com/appliance_901) |
 | Cobertura  | Memphis, TN y alrededores (servicio a domicilio) |
 
+## Seguridad del sitio
+
+### Content-Security-Policy
+
+Las cuatro páginas (las dos públicas, el panel y el diagnóstico) llevan un CSP estricto en una
+etiqueta `<meta>`. Solo se permite cargar recursos de este dominio y de los servicios
+necesarios: el SDK de Firebase desde `gstatic.com`, Firestore, Firebase Authentication y el
+Apps Script de los avisos.
+
+Qué impide, en concreto: **si alguien lograra inyectar un script en la página, el navegador lo
+bloquea**. Eso importa especialmente al añadir pagos — el ataque típico no roba tarjetas, sino
+que cambia el enlace de pago por el de otra cuenta. Con este CSP, un enlace a un dominio no
+permitido falla.
+
+Para que el CSP pueda ser estricto, el código no usa nada en línea: ni atributos `style=`, ni
+manejadores `onclick=`, ni bloques `<style>`/`<script>` embebidos. **Al añadir código nuevo hay
+que mantener esa regla**, y si aparece un servicio externo nuevo, agregar su dominio al CSP de
+las páginas que lo usen.
+
+GitHub Pages no permite enviar cabeceras HTTP propias, así que el CSP va en `<meta>`. Eso tiene
+una limitación: las directivas `frame-ancestors`, `report-uri` y `sandbox` **solo funcionan como
+cabecera**, no en `<meta>`. Si algún día el sitio se mueve a un hosting con cabeceras
+(Vercel, Cloudflare, Netlify), conviene añadir `frame-ancestors 'none'` contra el clickjacking.
+
+### Pendiente de configurar en las consolas
+
+Dos cosas que no se pueden hacer desde el código:
+
+1. **App Check con reCAPTCHA** (Firebase Console → App Check). Hoy las reglas validan el
+   *formato* de una solicitud, pero no *quién* la envía: con la configuración pública cualquiera
+   puede escribir en la base desde una terminal. App Check hace que Firestore solo acepte
+   escrituras que vengan del sitio real. Es gratis y es la mejora de seguridad más importante
+   que queda.
+2. **Restringir la API key por dominio** (Google Cloud Console → APIs y servicios →
+   Credenciales → la clave del proyecto → Restricciones de aplicación → Sitios web).
+
 ## Pendientes marcados en el código (`TODO`)
 
 1. **Horario de atención** — aún no definido. Hay un `TODO` en el header, en la sección
@@ -243,6 +279,42 @@ enviarte mensajes de WhatsApp. La clave se puede cambiar volviendo a activar el 
 - CallMeBot es un servicio no oficial y gratuito: puede fallar o cambiar sin aviso. Por eso
   el correo de la opción A sirve de respaldo.
 - Apps Script envía hasta unos 100 correos al día con una cuenta de Gmail normal.
+
+## Seguridad del sitio
+
+### Content-Security-Policy
+
+Las cuatro páginas (las dos públicas, el panel y el diagnóstico) llevan un CSP estricto en una
+etiqueta `<meta>`. Solo se permite cargar recursos de este dominio y de los servicios
+necesarios: el SDK de Firebase desde `gstatic.com`, Firestore, Firebase Authentication y el
+Apps Script de los avisos.
+
+Qué impide, en concreto: **si alguien lograra inyectar un script en la página, el navegador lo
+bloquea**. Eso importa especialmente al añadir pagos — el ataque típico no roba tarjetas, sino
+que cambia el enlace de pago por el de otra cuenta. Con este CSP, un enlace a un dominio no
+permitido falla.
+
+Para que el CSP pueda ser estricto, el código no usa nada en línea: ni atributos `style=`, ni
+manejadores `onclick=`, ni bloques `<style>`/`<script>` embebidos. **Al añadir código nuevo hay
+que mantener esa regla**, y si aparece un servicio externo nuevo, agregar su dominio al CSP de
+las páginas que lo usen.
+
+GitHub Pages no permite enviar cabeceras HTTP propias, así que el CSP va en `<meta>`. Eso tiene
+una limitación: las directivas `frame-ancestors`, `report-uri` y `sandbox` **solo funcionan como
+cabecera**, no en `<meta>`. Si algún día el sitio se mueve a un hosting con cabeceras
+(Vercel, Cloudflare, Netlify), conviene añadir `frame-ancestors 'none'` contra el clickjacking.
+
+### Pendiente de configurar en las consolas
+
+Dos cosas que no se pueden hacer desde el código:
+
+1. **App Check con reCAPTCHA** (Firebase Console → App Check). Hoy las reglas validan el
+   *formato* de una solicitud, pero no *quién* la envía: con la configuración pública cualquiera
+   puede escribir en la base desde una terminal. App Check hace que Firestore solo acepte
+   escrituras que vengan del sitio real. Es gratis y es la mejora de seguridad más importante
+   que queda.
+2. **Restringir la API key por dominio** (Google Cloud Console → APIs y servicios →
+   Credenciales → la clave del proyecto → Restricciones de aplicación → Sitios web).
 
 ## Pendiente
 

@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- SEGURIDAD: solo se permite cargar recursos de este sitio y de los
+       servicios estrictamente necesarios. Si alguien lograra inyectar un
+       script, el navegador lo bloquea; y no se puede cambiar un enlace de
+       pago por uno de otro dominio sin que falle. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; script-src 'self' https://www.gstatic.com; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://firestore.googleapis.com https://script.google.com https://script.googleusercontent.com; form-action 'self'; frame-src 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- SEO ON-PAGE -->
   <title>Appliance Solutions 901 | Reparación de Electrodomésticos en Memphis, TN</title>
   <meta name="description" content="Appliance Solutions 901: reparación de electrodomésticos y trabajo eléctrico en Memphis, TN. Refrigeradores, lavadoras, secadoras, hornos, tomacorrientes y breakers — además de plomería y mantenimiento. Servicio local, rápido y honesto. Llama al 901-686-2035.">
@@ -851,7 +857,7 @@
 
           <div class="carousel__controls">
             <button class="carousel__arrow" type="button" data-carousel-prev aria-label="Testimonio anterior">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="transform:rotate(180deg)"><use href="#i-arrow-right"></use></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" class="icon-flip"><use href="#i-arrow-right"></use></svg>
             </button>
             <div class="carousel__dots" id="testimonialDots" role="tablist" aria-label="Seleccionar testimonio"></div>
             <button class="carousel__arrow" type="button" data-carousel-next aria-label="Testimonio siguiente">
@@ -1213,7 +1219,7 @@
 
   <!-- BOTÓN VOLVER ARRIBA -->
   <button class="to-top" id="toTop" type="button" aria-label="Volver arriba">
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="transform:rotate(-90deg)"><use href="#i-arrow-right"></use></svg>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" class="icon-up"><use href="#i-arrow-right"></use></svg>
   </button>
 
   <script src="../js/script.js" defer></script>
