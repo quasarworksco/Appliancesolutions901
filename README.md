@@ -195,7 +195,15 @@ público del sitio.
    (ejecutar como: **yo**; acceso: **cualquier usuario**)
 4. Copia la URL que termina en `/exec` y pégala en `NOTIFY_URL`
 
-Para probar, ejecuta la función `prueba()` desde el editor de Apps Script.
+Para probar hay dos formas:
+
+- Ejecutar la función `prueba()` desde el editor (usa el código **actual**)
+- Abrir la URL `/exec` en el navegador (usa el código **implementado**), que muestra el estado
+  de la configuración; añadiendo `?prueba=as901-aviso` manda un mensaje al grupo
+
+La diferencia importa: Apps Script sirve en la URL una *foto* del código del momento en que se
+implementó. Si cambias el script y no vuelves a implementar con una **versión nueva**, la URL
+sigue ejecutando el código viejo aunque el editor muestre el nuevo.
 
 #### Telegram
 

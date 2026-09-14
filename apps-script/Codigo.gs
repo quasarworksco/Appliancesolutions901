@@ -59,6 +59,42 @@ const TELEGRAM_CHAT_ID = '';   // opcional: se detecta solo si lo dejas vacío
 const SHEET_ID = '';
 
 
+/**
+ * Abrir la URL /exec en el navegador cae aquí. Sirve para comprobar de un
+ * vistazo que la VERSIÓN IMPLEMENTADA es la correcta, sin depender del sitio.
+ *
+ * Añadiendo ?prueba=LA_PALABRA_CLAVE manda un mensaje de prueba al grupo.
+ */
+function doGet(e) {
+  var p = (e && e.parameter) || {};
+
+  if (p.prueba && p.prueba === TOKEN) {
+    prueba();
+    return ContentService.createTextOutput(
+      'Mensaje de prueba enviado. Revisa el grupo de Telegram.');
+  }
+
+  var estado = [];
+  estado.push('Appliance Solutions 901 - servicio de avisos');
+  estado.push('');
+  estado.push('Telegram configurado: ' + (TELEGRAM_TOKEN ? 'si' : 'NO, falta el token'));
+  if (TELEGRAM_TOKEN) {
+    var chat = chatDelGrupo();
+    estado.push('Grupo detectado: ' + (chat || 'todavia ninguno'));
+  }
+  estado.push('Correo configurado: ' + (EMAIL_TO ? 'si' : 'no'));
+  estado.push('WhatsApp configurado: ' + (CALLMEBOT_APIKEY ? 'si' : 'no'));
+  estado.push('');
+  estado.push('Si arriba dice que falta el token pero en el editor ya lo pegaste,');
+  estado.push('lo que falta es volver a implementar el script con una version nueva.');
+  estado.push('');
+  estado.push('Para mandar un mensaje de prueba al grupo, abre esta misma URL');
+  estado.push('agregando al final:  ?prueba=' + TOKEN);
+
+  return ContentService.createTextOutput(estado.join('\n'));
+}
+
+
 function doPost(e) {
   try {
     var datos = JSON.parse(e.postData.contents);
