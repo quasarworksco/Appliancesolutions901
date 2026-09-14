@@ -86,7 +86,8 @@ function avisar(texto, lead, guardado) {
       var chat = chatDelGrupo();
       if (!chat) {
         console.error('Telegram: todavía no sé a qué grupo escribir. ' +
-                      'Agrega el bot al grupo y vuelve a intentarlo.');
+                      'Agrega el bot al grupo, escribe ahí /start@NOMBREDELBOT y ' +
+                      'ejecuta diagnosticarTelegram() para ver qué falta.');
       } else {
         UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage', {
           method: 'post',
@@ -183,7 +184,16 @@ function buscarChat() {
       'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/getUpdates',
       { muteHttpExceptions: true });
     var datos = JSON.parse(res.getContentText());
-    if (!datos.ok || !datos.result || !datos.result.length) return '';
+
+    if (!datos.ok) {
+      console.error('Telegram rechazó la consulta: ' + (datos.description || res.getContentText()));
+      return '';
+    }
+    if (!datos.result || !datos.result.length) {
+      console.error('Telegram no tiene avisos pendientes. Escribe en el grupo el comando ' +
+                    '/start@NOMBREDELBOT (con la arroba y el nombre del bot) y vuelve a ejecutar.');
+      return '';
+    }
 
     var suelto = '';
     for (var i = datos.result.length - 1; i >= 0; i--) {
@@ -249,6 +259,81 @@ function mensajeTelegram(lead, guardado) {
     l.push('Panel: https://appliancesolutions901.dgp-link.com/admin/');
   }
   return l.join('\n');
+}
+
+
+/**
+ * Diagnóstico de Telegram. Ejecútala cuando algo no cuadre: dice quién es el
+ * bot, si hay un webhook estorbando y qué avisos ha recibido.
+ */
+function diagnosticarTelegram() {
+  if (!TELEGRAM_TOKEN) {
+    console.log('Falta pegar el TELEGRAM_TOKEN arriba.');
+    return;
+  }
+
+  function pedir(metodo) {
+    var res = UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/' + metodo,
+                                { muteHttpExceptions: true });
+    return JSON.parse(res.getContentText());
+  }
+
+  // 1. ¿El token sirve?
+  var yo = pedir('getMe');
+  if (!yo.ok) {
+    console.log('1) TOKEN INVÁLIDO: ' + (yo.description || 'sin detalle'));
+    console.log('   Pide uno nuevo a @BotFather y pégalo arriba.');
+    return;
+  }
+  console.log('1) Token correcto. Bot: @' + yo.result.username);
+
+  // 2. ¿Hay un webhook robándose los avisos?
+  var hook = pedir('getWebhookInfo');
+  if (hook.ok && hook.result && hook.result.url) {
+    console.log('2) PROBLEMA: hay un webhook configurado en ' + hook.result.url);
+    console.log('   Mientras exista, getUpdates no devuelve nada. Ejecuta borrarWebhook().');
+    return;
+  }
+  console.log('2) Sin webhook: los avisos se pueden leer.');
+
+  // 3. ¿Qué avisos hay?
+  var ups = pedir('getUpdates');
+  if (!ups.ok) {
+    console.log('3) Telegram rechazó getUpdates: ' + (ups.description || ''));
+    return;
+  }
+  if (!ups.result.length) {
+    console.log('3) NO HAY AVISOS. Telegram solo los guarda 24 horas.');
+    console.log('   Haz esto en el grupo: escribe  /start@' + yo.result.username);
+    console.log('   (con la arroba y el nombre del bot) y vuelve a ejecutar esta función.');
+    return;
+  }
+  console.log('3) Avisos recibidos: ' + ups.result.length);
+  var vistos = {};
+  ups.result.forEach(function (u) {
+    var chat = (u.my_chat_member || u.message || u.channel_post || u.edited_message || {}).chat;
+    if (chat && !vistos[chat.id]) {
+      vistos[chat.id] = true;
+      console.log('   - ' + chat.type + '  id ' + chat.id +
+                  '  ' + (chat.title || chat.username || ''));
+    }
+  });
+
+  // 4. ¿Qué va a usar el script?
+  var elegido = chatDelGrupo();
+  console.log(elegido
+    ? '4) Los avisos se enviarán al chat ' + elegido
+    : '4) Ninguno sirve todavía. Agrega el bot a un GRUPO y escribe ahí /start@' + yo.result.username);
+}
+
+
+/* Borra un webhook que esté impidiendo leer los avisos */
+function borrarWebhook() {
+  if (!TELEGRAM_TOKEN) { console.log('Falta el token.'); return; }
+  var res = UrlFetchApp.fetch(
+    'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/deleteWebhook?drop_pending_updates=false',
+    { muteHttpExceptions: true });
+  console.log(res.getContentText());
 }
 
 

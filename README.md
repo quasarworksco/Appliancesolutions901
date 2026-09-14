@@ -205,8 +205,17 @@ Para probar, ejecuta la función `prueba()` desde el editor de Apps Script.
 
 El id del grupo **no hay que buscarlo**: Telegram avisa cuando agregan al bot a un grupo, y el
 script detecta ese aviso la primera vez que envía algo y lo guarda en las propiedades del
-proyecto. `obtenerChatId()` sirve solo para comprobar que ya lo sabe, y `olvidarGrupo()` para
-que vuelva a detectarlo si cambias de grupo.
+proyecto.
+
+Si no detecta el grupo, ejecuta **`diagnosticarTelegram()`**: comprueba el token, si hay un
+webhook estorbando, qué avisos ha recibido el bot y a qué chat va a escribir. Las otras
+funciones de apoyo son `borrarWebhook()`, `olvidarGrupo()` (para volver a detectar el grupo si
+lo cambias) y `obtenerChatId()`.
+
+Telegram guarda los avisos solo **24 horas**. Si el bot lleva más tiempo en el grupo sin
+actividad, escribe en el grupo `/start@nombredelbot` para generar uno nuevo: los comandos
+dirigidos al bot le llegan siempre, aunque el modo privacidad esté activado, que es lo que pasa
+por defecto con los mensajes normales.
 
 El mensaje llega con nombre, teléfono con enlace de llamada, enlace de WhatsApp, equipo,
 marca y modelo, dirección con enlace a Google Maps, el mensaje del cliente y el idioma.
