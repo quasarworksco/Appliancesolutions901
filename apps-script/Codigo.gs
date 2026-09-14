@@ -41,18 +41,18 @@ const EMAIL_TO = 'Appliancesolutions901@gmail.com';
 const TOKEN = 'as901-aviso';
 
 /* ---------- TELEGRAM ----------
-   1. En Telegram habla con @BotFather, manda /newbot y sigue los pasos.
-      Te devuelve un token con esta pinta: 123456789:AAH...
-   2. Agrega el bot a tu grupo (Añadir miembro -> busca el nombre del bot).
-   3. Escribe cualquier mensaje en el grupo.
-   4. Pega el token abajo, guarda, y ejecuta la función obtenerChatId()
-      desde el editor. En el registro te va a aparecer el id del grupo
-      (empieza con guión, por ejemplo -1001234567890). Pégalo abajo.
+   Solo hacen falta dos cosas:
+     1. Pegar aquí abajo el token que te dio @BotFather.
+     2. Agregar el bot a tu grupo.
+
+   El id del grupo NO hay que buscarlo: el script lo detecta solo la
+   primera vez (Telegram avisa cuando agregan al bot a un grupo) y lo deja
+   guardado. Si prefieres fijarlo a mano, escríbelo en TELEGRAM_CHAT_ID.
 
    El token vive SOLO aquí, nunca en el código del sitio: con él se puede
-   leer y escribir en el grupo, así que no debe quedar público. */
+   escribir en el grupo, así que no debe quedar público. */
 const TELEGRAM_TOKEN = '';
-const TELEGRAM_CHAT_ID = '';
+const TELEGRAM_CHAT_ID = '';   // opcional: se detecta solo si lo dejas vacío
 
 /* Opcional: ID de una Google Sheet para ir guardando cada solicitud.
    Es el código largo que aparece en la URL de la hoja. Vacío = no usar. */
@@ -81,19 +81,25 @@ function doPost(e) {
 
 function avisar(texto, lead, guardado) {
   // 1) Telegram
-  if (TELEGRAM_TOKEN && TELEGRAM_CHAT_ID) {
+  if (TELEGRAM_TOKEN) {
     try {
-      UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage', {
-        method: 'post',
-        contentType: 'application/json',
-        muteHttpExceptions: true,
-        payload: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: mensajeTelegram(lead, guardado),
-          parse_mode: 'HTML',
-          disable_web_page_preview: true
-        })
-      });
+      var chat = chatDelGrupo();
+      if (!chat) {
+        console.error('Telegram: todavía no sé a qué grupo escribir. ' +
+                      'Agrega el bot al grupo y vuelve a intentarlo.');
+      } else {
+        UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage', {
+          method: 'post',
+          contentType: 'application/json',
+          muteHttpExceptions: true,
+          payload: JSON.stringify({
+            chat_id: chat,
+            text: mensajeTelegram(lead, guardado),
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
+          })
+        });
+      }
     } catch (err) {
       console.error('Telegram falló: ' + err);
     }
@@ -146,6 +152,65 @@ function avisar(texto, lead, guardado) {
 }
 
 
+/**
+ * Devuelve el id del grupo de Telegram.
+ * Orden: lo que esté escrito arriba -> lo ya detectado -> detectarlo ahora.
+ *
+ * Telegram genera un aviso ("my_chat_member") en cuanto agregan el bot a un
+ * grupo, así que con eso basta: no hace falta escribir ningún comando.
+ */
+function chatDelGrupo() {
+  if (TELEGRAM_CHAT_ID) return TELEGRAM_CHAT_ID;
+
+  var props = PropertiesService.getScriptProperties();
+  var guardado = props.getProperty('TELEGRAM_CHAT_ID');
+  if (guardado) return guardado;
+
+  var encontrado = buscarChat();
+  if (encontrado) {
+    props.setProperty('TELEGRAM_CHAT_ID', encontrado);
+    console.log('Grupo detectado y guardado: ' + encontrado);
+  }
+  return encontrado;
+}
+
+
+/* Busca en los avisos recientes de Telegram un grupo donde esté el bot */
+function buscarChat() {
+  if (!TELEGRAM_TOKEN) return '';
+  try {
+    var res = UrlFetchApp.fetch(
+      'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/getUpdates',
+      { muteHttpExceptions: true });
+    var datos = JSON.parse(res.getContentText());
+    if (!datos.ok || !datos.result || !datos.result.length) return '';
+
+    var suelto = '';
+    for (var i = datos.result.length - 1; i >= 0; i--) {
+      var u = datos.result[i];
+      var chat = (u.my_chat_member || u.message || u.channel_post ||
+                  u.edited_message || {}).chat;
+      if (!chat) continue;
+      if (chat.type === 'group' || chat.type === 'supergroup' || chat.type === 'channel') {
+        return String(chat.id);          // un grupo: lo preferimos siempre
+      }
+      if (!suelto) suelto = String(chat.id);   // conversación privada, de reserva
+    }
+    return suelto;
+  } catch (err) {
+    console.error('No se pudo consultar Telegram: ' + err);
+    return '';
+  }
+}
+
+
+/* Si alguna vez cambias de grupo, ejecuta esto para que vuelva a detectarlo */
+function olvidarGrupo() {
+  PropertiesService.getScriptProperties().deleteProperty('TELEGRAM_CHAT_ID');
+  console.log('Listo. El próximo aviso volverá a detectar el grupo.');
+}
+
+
 /* Mensaje con formato para el grupo de Telegram */
 function mensajeTelegram(lead, guardado) {
   function esc(v) {
@@ -187,13 +252,19 @@ function mensajeTelegram(lead, guardado) {
 }
 
 
-/* Ejecútala una vez, después de agregar el bot al grupo y escribir ahí un
-   mensaje. Muestra en el registro el id del grupo para pegarlo arriba. */
+/* Comprobación opcional: dice si el bot ya sabe a qué grupo escribir.
+   No hace falta ejecutarla, el script lo detecta solo. */
 function obtenerChatId() {
   if (!TELEGRAM_TOKEN) {
     console.log('Primero pega el TELEGRAM_TOKEN arriba.');
     return;
   }
+  var yaSabe = chatDelGrupo();
+  if (yaSabe) {
+    console.log('Todo listo: los avisos van al grupo ' + yaSabe);
+    return;
+  }
+  console.log('Todavía no encuentro el grupo. Revisa que el bot esté dentro.');
   var res = UrlFetchApp.fetch(
     'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/getUpdates',
     { muteHttpExceptions: true });
