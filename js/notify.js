@@ -7,14 +7,19 @@
    ========================================================= */
 import { NOTIFY_URL, NOTIFY_TOKEN, CALLMEBOT } from './firebase-config.js';
 
-function armarTexto(lead) {
+function armarTexto(lead, guardado) {
   const lineas = [
     'NUEVA SOLICITUD - Appliance Solutions 901',
-    '',
+    ''
+  ];
+  if (guardado === false) {
+    lineas.push('OJO: esta solicitud NO se guardo en el panel. Anotala a mano.', '');
+  }
+  lineas.push.apply(lineas, [
     'Nombre: ' + (lead.nombre || 'Sin nombre'),
     'Telefono: ' + (lead.telefono || 'Sin telefono'),
     'Electrodomestico: ' + (lead.electrodomestico || 'Sin especificar')
-  ];
+  ]);
   if (lead.marcaModelo) lineas.push('Marca/modelo: ' + lead.marcaModelo);
   if (lead.email) lineas.push('Email: ' + lead.email);
   if (lead.direccion) lineas.push('Direccion: ' + lead.direccion);
@@ -23,15 +28,17 @@ function armarTexto(lead) {
   if (lead.mensaje) {
     lineas.push('', 'Mensaje: ' + String(lead.mensaje).slice(0, 400));
   }
-  lineas.push('', 'Panel: https://appliancesolutions901.dgp-link.com/admin/');
+  if (guardado !== false) {
+    lineas.push('', 'Panel: https://appliancesolutions901.dgp-link.com/admin/');
+  }
   return lineas.join('\n');
 }
 
 /**
  * Manda el aviso. Nunca lanza ni hace esperar al visitante.
  */
-export function notifyNewLead(lead) {
-  const texto = armarTexto(lead);
+export function notifyNewLead(lead, guardado) {
+  const texto = armarTexto(lead, guardado);
 
   try {
     // Opción A: el script de Google reenvía a WhatsApp y al correo
@@ -41,7 +48,7 @@ export function notifyNewLead(lead) {
         mode: 'no-cors',
         // text/plain evita la petición previa de CORS que Apps Script no responde
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ token: NOTIFY_TOKEN, texto: texto, lead: lead })
+        body: JSON.stringify({ token: NOTIFY_TOKEN, texto: texto, lead: lead, guardado: guardado !== false })
       }).catch(function () { /* el aviso es opcional */ });
       return;
     }
