@@ -44,7 +44,7 @@ export const LEADS_COLLECTION = "leads";
    ========================================================= */
 
 /* Opción A — URL del Web App de Google Apps Script */
-export const NOTIFY_URL = "";
+export const NOTIFY_URL = "https://script.google.com/macros/s/AKfycbxB6U5FPL-muO9ZGWegFS9HoXm7cAX-BOWJnyJoYKD9zL4lU30VixvzN8OGel-2Uw1k/exec";
 
 /* Palabra compartida para que el script ignore peticiones ajenas.
    Debe ser idéntica a la del Apps Script. */
