@@ -45,11 +45,21 @@
 
     <div class="final" id="final"></div>
 
+    <div class="paso" id="avisoPaso" hidden>
+      <span class="marca">·</span>
+      <div>
+        <h2>Aviso a Telegram</h2>
+        <p id="avisoTexto">Comprueba que el sitio alcanza el script de Google.</p>
+        <button class="btn" type="button" id="avisoBtn">Enviar un aviso de prueba</button>
+      </div>
+    </div>
+
     <a class="btn btn--gris" href="./">Volver al panel</a>
   </div>
 
 <script type="module">
-import { firebaseConfig, FIREBASE_SDK, LEADS_COLLECTION } from '../js/firebase-config.js';
+import { firebaseConfig, FIREBASE_SDK, LEADS_COLLECTION, NOTIFY_URL, NOTIFY_TOKEN }
+  from '../js/firebase-config.js';
 
 const pasos = document.getElementById('pasos');
 const final = document.getElementById('final');
@@ -95,6 +105,59 @@ const PISTAS = {
     'Las reglas exigen sesión iniciada para escribir. Revisa que la sección de "create" en las reglas ' +
     'sea la del repositorio.'
 };
+
+/* --- Prueba del aviso a Telegram --- */
+const avisoPaso = document.getElementById('avisoPaso');
+const avisoTexto = document.getElementById('avisoTexto');
+const avisoBtn = document.getElementById('avisoBtn');
+
+if (!NOTIFY_URL) {
+  avisoPaso.hidden = false;
+  avisoBtn.remove();
+  avisoTexto.innerHTML = 'No hay ningún script conectado: <code>NOTIFY_URL</code> está vacío ' +
+    'en <code>js/firebase-config.js</code>.';
+} else {
+  avisoPaso.hidden = false;
+  avisoTexto.innerHTML = 'El sitio enviará el aviso a <code>' +
+    NOTIFY_URL.slice(0, 62) + '…</code>';
+
+  avisoBtn.addEventListener('click', async () => {
+    avisoBtn.disabled = true;
+    avisoBtn.textContent = 'Enviando…';
+    const lead = {
+      nombre: 'PRUEBA DESDE EL DIAGNOSTICO',
+      telefono: '901-000-0000', email: '', electrodomestico: 'Otro',
+      marcaModelo: '', direccion: 'Prueba 123, Memphis, TN 38118', zona: '',
+      idioma: 'es',
+      mensaje: 'Aviso de prueba lanzado desde /admin/diagnostico.html'
+    };
+    try {
+      await fetch(NOTIFY_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          token: NOTIFY_TOKEN, guardado: true, lead: lead,
+          texto: 'PRUEBA DESDE EL DIAGNOSTICO\n\nSi ves esto en el grupo, el sitio ' +
+                 'alcanza el script y los avisos funcionan.'
+        })
+      });
+      avisoPaso.classList.add('ok');
+      avisoPaso.querySelector('.marca').textContent = '✓';
+      avisoTexto.innerHTML = '<strong>Enviado.</strong> Mira el grupo de Telegram.<br>' +
+        'Si no llega, el problema está en el script de Google: entra a script.google.com → ' +
+        'menú <b>Ejecuciones</b> y mira si aparece un <code>doPost</code> de hace un momento. ' +
+        'Si aparece pero no llegó el mensaje, falta <b>volver a implementar</b> el script con ' +
+        'una <b>versión nueva</b>. Si no aparece, la implementación no está abierta a ' +
+        '"cualquier usuario".';
+    } catch (err) {
+      avisoPaso.classList.add('mal');
+      avisoPaso.querySelector('.marca').textContent = '!';
+      avisoTexto.innerHTML = 'No se pudo enviar: <code>' + (err.message || err) + '</code>';
+    }
+    avisoBtn.textContent = 'Enviar otro aviso de prueba';
+    avisoBtn.disabled = false;
+  });
+}
 
 (async () => {
   // --- 1. Configuración ---
