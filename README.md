@@ -166,8 +166,14 @@ el panel con el botón Borrar.
 
 ### Si Firestore falla
 
-El formulario cae automáticamente al envío por `mailto:` que había antes, para que no se
-pierda ninguna solicitud. El visitante ve un mensaje distinto según el caso.
+Pasan dos cosas, para que la solicitud no se pierda de ninguna manera:
+
+1. El formulario cae al envío por `mailto:` que había antes y el visitante ve un mensaje
+   distinto según el caso.
+2. **El aviso (Telegram, WhatsApp, correo) sale igual**, con todos los datos y una advertencia
+   arriba: *"OJO: esta solicitud NO se guardó en el panel. Anótala a mano."*
+
+Esto funciona incluso si el SDK de Firebase no llegó a cargarse.
 
 ## Aviso de solicitud nueva (WhatsApp y correo)
 
@@ -178,18 +184,32 @@ Se configura en `js/firebase-config.js`. Hay dos formas, elige una:
 
 ### Opción A — Google Apps Script (recomendada)
 
-La clave de CallMeBot vive dentro del script de Google, no en el código público del sitio.
-Además manda un correo de respaldo y puede copiar cada solicitud a una Google Sheet.
+Un solo script reenvía cada solicitud a **Telegram**, **WhatsApp** y **correo**, y opcionalmente
+la copia a una Google Sheet. Las claves viven dentro del script de Google, nunca en el código
+público del sitio.
 
-1. Consigue tu clave de CallMeBot siguiendo los pasos de
-   https://www.callmebot.com/blog/free-api-whatsapp-messages/
-2. Abre https://script.google.com, crea un proyecto y pega `apps-script/Codigo.gs`
-3. Rellena `CALLMEBOT_APIKEY`, `EMAIL_TO` y, si quieres, `SHEET_ID`
-4. Implementar → Nueva implementación → Aplicación web
+1. Abre https://script.google.com, crea un proyecto y pega `apps-script/Codigo.gs`
+2. Rellena las constantes que vayas a usar (`TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`,
+   `CALLMEBOT_APIKEY`, `EMAIL_TO`, `SHEET_ID`)
+3. Implementar → Nueva implementación → Aplicación web
    (ejecutar como: **yo**; acceso: **cualquier usuario**)
-5. Copia la URL que termina en `/exec` y pégala en `NOTIFY_URL`
+4. Copia la URL que termina en `/exec` y pégala en `NOTIFY_URL`
 
 Para probar, ejecuta la función `prueba()` desde el editor de Apps Script.
+
+#### Telegram
+
+1. Habla con **@BotFather** en Telegram, manda `/newbot` y guarda el token
+2. Agrega el bot a tu grupo y escribe cualquier mensaje ahí
+3. Pega el token en `TELEGRAM_TOKEN` y ejecuta la función **`obtenerChatId()`**:
+   el registro te muestra el id del grupo (empieza con guión)
+4. Pégalo en `TELEGRAM_CHAT_ID`
+
+El mensaje llega con nombre, teléfono con enlace de llamada, enlace de WhatsApp, equipo,
+marca y modelo, dirección con enlace a Google Maps, el mensaje del cliente y el idioma.
+
+**El token de Telegram no debe ir nunca en el código del sitio**: con él se puede leer y
+escribir en el grupo. Por eso Telegram solo se conecta a través del Apps Script.
 
 ### Opción B — CallMeBot directo desde el navegador
 
