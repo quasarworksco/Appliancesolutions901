@@ -165,9 +165,14 @@ function chatDelGrupo() {
 
   var props = PropertiesService.getScriptProperties();
   var guardado = props.getProperty('TELEGRAM_CHAT_ID');
-  if (guardado) return guardado;
+
+  // Los grupos tienen id negativo. Si lo guardado es una conversación
+  // privada, se vuelve a mirar por si ya apareció el grupo.
+  if (guardado && guardado.charAt(0) === '-') return guardado;
 
   var encontrado = buscarChat();
+  if (guardado && !encontrado) return guardado;
+  if (guardado && encontrado === guardado) return guardado;
   if (encontrado) {
     props.setProperty('TELEGRAM_CHAT_ID', encontrado);
     console.log('Grupo detectado y guardado: ' + encontrado);
@@ -195,18 +200,26 @@ function buscarChat() {
       return '';
     }
 
-    var suelto = '';
-    for (var i = datos.result.length - 1; i >= 0; i--) {
+    // Se recorre TODO antes de decidir: un grupo siempre gana a una
+    // conversación privada, sin importar el orden en que lleguen los avisos.
+    var grupo = '', privado = '';
+    for (var i = 0; i < datos.result.length; i++) {
       var u = datos.result[i];
       var chat = (u.my_chat_member || u.message || u.channel_post ||
                   u.edited_message || {}).chat;
       if (!chat) continue;
-      if (chat.type === 'group' || chat.type === 'supergroup' || chat.type === 'channel') {
-        return String(chat.id);          // un grupo: lo preferimos siempre
+      if (!grupo && (chat.type === 'group' || chat.type === 'supergroup' ||
+                     chat.type === 'channel')) {
+        grupo = String(chat.id);
       }
-      if (!suelto) suelto = String(chat.id);   // conversación privada, de reserva
+      if (!privado) privado = String(chat.id);
     }
-    return suelto;
+    if (!grupo && privado) {
+      console.log('Aviso: solo encuentro una conversación privada (' + privado + '). ' +
+                  'Si querías el grupo, agrega el bot al grupo y escribe ahí /start@' +
+                  'NOMBREDELBOT.');
+    }
+    return grupo || privado;
   } catch (err) {
     console.error('No se pudo consultar Telegram: ' + err);
     return '';
