@@ -263,6 +263,18 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .quote select:focus,.quote input:focus{border-color:var(--blue-dark);box-shadow:0 0 0 3px rgba(79,182,232,.25);outline:none;}
 .quote__submit{align-self:end;height:48px;}
 
+/* promo de pago anticipado en el hero */
+.hero__promo{
+  display:inline-flex;align-items:center;flex-wrap:wrap;gap:.5rem;
+  margin:0 auto 1.1rem;padding:.55rem 1.1rem;border-radius:999px;
+  background:rgba(30,158,90,.16);border:1px solid rgba(30,158,90,.5);
+  color:#D6F5E4;font-size:clamp(.82rem,2.3vw,.94rem);text-align:left;
+}
+.hero__promo svg{flex:none;color:#7BE3AC;}
+.hero__promo strong{color:#fff;}
+.hero__promo a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
+.hero__promo a:hover{color:#7BE3AC;}
+
 .hero__ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;}
 .hero__ctas .btn{flex:1 1 260px;max-width:100%;}
 
@@ -499,6 +511,15 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .pricing__credit p{margin:0;color:var(--ink-2);font-size:1rem;line-height:1.6;}
 .pricing__credit strong{color:var(--ink);font-family:var(--font-head);}
 
+/* botón de pago de la tarjeta prepago */
+.price-card__amount small{font-size:.42em;vertical-align:baseline;}
+.price-card__pay{width:100%;margin-top:1.1rem;}
+.price-card__secure{
+  display:flex;align-items:center;justify-content:center;gap:.35rem;
+  margin:.6rem 0 0;font-size:.78rem;color:var(--muted);
+}
+.price-card__secure svg{flex:none;color:var(--green);}
+
 .pricing__foot{
   display:flex;align-items:center;justify-content:center;gap:.5rem;
   max-width:640px;margin:1.1rem auto 0;text-align:center;
@@ -642,6 +663,14 @@ button,input,select,textarea{font:inherit;color:inherit;}
   border-radius:var(--radius-sm);background:#E9F7EF;color:#14733F;font-size:.9rem;font-weight:600;
 }
 .form__success svg{flex:none;margin-top:.1rem;}
+/* oferta de pago tras enviar la solicitud */
+.form__pay{
+  margin:0 0 .9rem;padding:1rem;border-radius:var(--radius-sm);
+  background:linear-gradient(120deg,rgba(30,158,90,.10),rgba(79,182,232,.10));
+  border:1.5px solid rgba(30,158,90,.35);text-align:center;
+}
+.form__pay span{display:block;margin-top:.6rem;font-size:.86rem;color:var(--muted);}
+
 .form__hint{margin:.9rem 0 0;text-align:center;font-size:.9rem;color:var(--muted);}
 .form__hint a{color:var(--red-dark);font-weight:700;}
 .form__hint a:hover{text-decoration:underline;}

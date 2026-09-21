@@ -83,6 +83,9 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .stat__num{margin:0;font-family:var(--head);font-weight:800;font-size:2rem;line-height:1;color:var(--ink);}
 .stat__label{margin:.3rem 0 0;font-size:.82rem;color:var(--muted);}
 .stat--new{border-color:var(--red);}
+.stat--pago{border-color:var(--green);}
+.stat--pago .stat__num{color:var(--green);}
+.tab--pago.is-active{background:var(--green);border-color:var(--green);}
 .stat--new .stat__num{color:var(--red);}
 
 /* ---------- FILTROS ---------- */
