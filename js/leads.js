@@ -7,7 +7,7 @@
    así no se pierde ninguna solicitud.
    ========================================================= */
 import { firebaseConfig, FIREBASE_SDK, LEADS_COLLECTION } from './firebase-config.js';
-import { notifyNewLead } from './notify.js';
+import { notifyNewLead, notifyPaymentIntent } from './notify.js';
 
 const CDN = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK}`;
 
@@ -74,7 +74,7 @@ async function saveLead(datos) {
   return guardado;
 }
 
-window.AS901 = Object.assign(window.AS901 || {}, { saveLead });
+window.AS901 = Object.assign(window.AS901 || {}, { saveLead, notifyPaymentIntent });
 
 // Avisa a script.js que ya puede contar con el guardado en base de datos
 document.dispatchEvent(new CustomEvent('as901:leads-ready'));

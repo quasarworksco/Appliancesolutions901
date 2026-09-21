@@ -35,11 +35,32 @@ function armarTexto(lead, guardado) {
 }
 
 /**
+ * Avisa de que un cliente pulsó el botón de pagar. No es prueba de pago:
+ * sirve para saber a quién corresponde el cobro que llegue a Square.
+ */
+export function notifyPaymentIntent(lead) {
+  const lineas = [
+    'FUE A PAGAR LA VISITA',
+    '',
+    (lead.nombre || 'Sin nombre') + ' acaba de abrir el pago de $79.98.',
+    '',
+    'Telefono: ' + (lead.telefono || 'Sin telefono')
+  ];
+  if (lead.electrodomestico) lineas.push('Equipo: ' + lead.electrodomestico);
+  if (lead.direccion) lineas.push('Direccion: ' + lead.direccion);
+  lineas.push('');
+  lineas.push('Cuando Square confirme el cobro, marca la casilla en el panel.');
+  enviar(lineas.join('\n'), lead, 'intento-pago');
+}
+
+/**
  * Manda el aviso. Nunca lanza ni hace esperar al visitante.
  */
 export function notifyNewLead(lead, guardado) {
-  const texto = armarTexto(lead, guardado);
+  enviar(armarTexto(lead, guardado), lead, 'solicitud', guardado);
+}
 
+function enviar(texto, lead, tipo, guardado) {
   try {
     // Opción A: el script de Google reenvía a WhatsApp y al correo
     if (NOTIFY_URL) {
@@ -48,7 +69,8 @@ export function notifyNewLead(lead, guardado) {
         mode: 'no-cors',
         // text/plain evita la petición previa de CORS que Apps Script no responde
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ token: NOTIFY_TOKEN, texto: texto, lead: lead, guardado: guardado !== false })
+        body: JSON.stringify({ token: NOTIFY_TOKEN, texto: texto, lead: lead,
+                               tipo: tipo, guardado: guardado !== false })
       }).catch(function () { /* el aviso es opcional */ });
       return;
     }

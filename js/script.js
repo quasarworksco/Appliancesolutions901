@@ -386,6 +386,18 @@
       var mensajeExito = successBox.querySelector('span');
 
       var bloquePago = document.getElementById('formPay');
+      var enlacePago = bloquePago ? bloquePago.querySelector('a') : null;
+
+      // Avisar a quién corresponde el cobro que va a llegar a Square.
+      // No es prueba de pago: es para poder cuadrarlo sin adivinar.
+      if (enlacePago && !enlacePago.dataset.avisa) {
+        enlacePago.dataset.avisa = '1';
+        enlacePago.addEventListener('click', function () {
+          if (window.AS901 && window.AS901.notifyPaymentIntent && window.__as901UltimaSolicitud) {
+            window.AS901.notifyPaymentIntent(window.__as901UltimaSolicitud);
+          }
+        });
+      }
 
       function mostrarExito(texto) {
         if (mensajeExito) mensajeExito.textContent = texto;
@@ -412,7 +424,7 @@
       var zona = '';
       try { zona = sessionStorage.getItem('as901_zip') || ''; } catch (err) { /* sin sessionStorage */ }
 
-      window.AS901.saveLead({
+      var datosSolicitud = {
         nombre: data.get('nombre'),
         telefono: data.get('telefono'),
         email: data.get('email') || '',
@@ -423,7 +435,10 @@
         zona: zona,
         idioma: LANG,
         origen: 'formulario-contacto'
-      }).then(function (guardado) {
+      };
+      window.__as901UltimaSolicitud = datosSolicitud;
+
+      window.AS901.saveLead(datosSolicitud).then(function (guardado) {
         if (guardado) {
           mostrarExito(T.sentOk);
         } else {
