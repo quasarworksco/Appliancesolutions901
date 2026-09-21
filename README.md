@@ -69,7 +69,7 @@ que cuesta pagando el día del servicio. En ambos casos el monto se descuenta de
 reparación.
 
 El cobro va por un **enlace de pago alojado de Square**
-(`https://square.link/u/HoCxbR6f`). Los datos de la tarjeta **nunca pasan por este sitio**:
+(`https://square.link/u/UKp2to7c`). Los datos de la tarjeta **nunca pasan por este sitio**:
 Square aloja el formulario y asume el cumplimiento PCI. Por eso no hace falta backend y por eso
 el enlace es lo único que hay que mantener actualizado si cambia el precio.
 
@@ -339,7 +339,7 @@ que cuesta pagando el día del servicio. En ambos casos el monto se descuenta de
 reparación.
 
 El cobro va por un **enlace de pago alojado de Square**
-(`https://square.link/u/HoCxbR6f`). Los datos de la tarjeta **nunca pasan por este sitio**:
+(`https://square.link/u/UKp2to7c`). Los datos de la tarjeta **nunca pasan por este sitio**:
 Square aloja el formulario y asume el cumplimiento PCI. Por eso no hace falta backend y por eso
 el enlace es lo único que hay que mantener actualizado si cambia el precio.
 
