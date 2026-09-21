@@ -92,8 +92,21 @@ teléfono** al pagar.
 
 En el panel hay una casilla "Pagó los $79.98" por solicitud, un contador de cuántas pagaron, una
 pestaña **Pagadas** para filtrarlas y un botón **Pagos** que abre las transacciones en Square.
-De momento la conciliación es manual; el siguiente paso es el webhook de Square hacia el Apps
-Script para que cada pago avise por Telegram.
+**Aviso de intención de pago.** Cuando el cliente pulsa el botón de pagar que aparece tras
+enviar el formulario, llega un mensaje al grupo de Telegram: *"FUE A PAGAR LA VISITA — Juan
+Pérez, 901-555-0142"*. **No es prueba de pago**, es para saber a quién corresponde el cobro que
+va a llegar a Square y poder cuadrarlo sin adivinar.
+
+El flujo completo queda así, sin que el dueño configure nada:
+
+1. El cliente envía la solicitud → llega el aviso al grupo
+2. Pulsa pagar → llega el segundo aviso con sus datos
+3. Square le manda al dueño su notificación de cobro, como siempre
+4. El dueño marca la casilla en el panel
+
+Se descartó el webhook de Square porque exige crear una aplicación en Square Developer, que no
+es razonable pedirle a quien solo administra el negocio. Si algún día hace falta automatizarlo,
+esa sigue siendo la vía.
 
 ## Seguridad del sitio
 
@@ -343,8 +356,21 @@ teléfono** al pagar.
 
 En el panel hay una casilla "Pagó los $79.98" por solicitud, un contador de cuántas pagaron, una
 pestaña **Pagadas** para filtrarlas y un botón **Pagos** que abre las transacciones en Square.
-De momento la conciliación es manual; el siguiente paso es el webhook de Square hacia el Apps
-Script para que cada pago avise por Telegram.
+**Aviso de intención de pago.** Cuando el cliente pulsa el botón de pagar que aparece tras
+enviar el formulario, llega un mensaje al grupo de Telegram: *"FUE A PAGAR LA VISITA — Juan
+Pérez, 901-555-0142"*. **No es prueba de pago**, es para saber a quién corresponde el cobro que
+va a llegar a Square y poder cuadrarlo sin adivinar.
+
+El flujo completo queda así, sin que el dueño configure nada:
+
+1. El cliente envía la solicitud → llega el aviso al grupo
+2. Pulsa pagar → llega el segundo aviso con sus datos
+3. Square le manda al dueño su notificación de cobro, como siempre
+4. El dueño marca la casilla en el panel
+
+Se descartó el webhook de Square porque exige crear una aplicación en Square Developer, que no
+es razonable pedirle a quien solo administra el negocio. Si algún día hace falta automatizarlo,
+esa sigue siendo la vía.
 
 ## Seguridad del sitio
 

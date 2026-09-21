@@ -104,6 +104,13 @@ function doPost(e) {
       return ContentService.createTextOutput('token invalido');
     }
 
+    // Aviso de que alguien pulsó el botón de pagar: mensaje corto y distinto,
+    // para no confundirlo con una solicitud nueva.
+    if (datos.tipo === 'intento-pago') {
+      avisarTextoSuelto(datos.texto || 'Un cliente fue a pagar la visita.');
+      return ContentService.createTextOutput('ok');
+    }
+
     avisar(datos.texto || 'Nueva solicitud en el sitio', datos.lead || {},
            datos.guardado !== false);
     return ContentService.createTextOutput('ok');
@@ -111,6 +118,31 @@ function doPost(e) {
   } catch (err) {
     console.error(err);
     return ContentService.createTextOutput('error');
+  }
+}
+
+
+/* Manda un texto tal cual al grupo y al correo, sin darle formato de solicitud */
+function avisarTextoSuelto(texto) {
+  if (TELEGRAM_TOKEN) {
+    try {
+      var chat = chatDelGrupo();
+      if (chat) {
+        UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage', {
+          method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+          payload: JSON.stringify({ chat_id: chat, text: texto, disable_web_page_preview: true })
+        });
+      }
+    } catch (err) {
+      console.error('Telegram falló: ' + err);
+    }
+  }
+  if (EMAIL_TO) {
+    try {
+      MailApp.sendEmail({ to: EMAIL_TO, subject: 'Un cliente fue a pagar la visita', body: texto });
+    } catch (err) {
+      console.error('Correo falló: ' + err);
+    }
   }
 }
 
