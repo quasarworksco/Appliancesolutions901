@@ -54,6 +54,12 @@ const TOKEN = 'as901-aviso';
 const TELEGRAM_TOKEN = '';
 const TELEGRAM_CHAT_ID = '';   // opcional: se detecta solo si lo dejas vacío
 
+/* Recordatorio: si aqui arriba dejas TELEGRAM_CHAT_ID vacio, el script
+   intenta detectar el grupo, pero Telegram solo guarda los avisos 24 horas.
+   Pasado ese plazo ya no puede encontrarlo y, si antes habia guardado una
+   conversacion privada, seguira usandola. Ante la duda, escribe el id del
+   grupo a mano: se ve al abrir la URL /exec en el navegador. */
+
 /* Opcional: ID de una Google Sheet para ir guardando cada solicitud.
    Es el código largo que aparece en la URL de la hoja. Vacío = no usar. */
 const SHEET_ID = '';
@@ -80,7 +86,16 @@ function doGet(e) {
   estado.push('Telegram configurado: ' + (TELEGRAM_TOKEN ? 'si' : 'NO, falta el token'));
   if (TELEGRAM_TOKEN) {
     var chat = chatDelGrupo();
-    estado.push('Grupo detectado: ' + (chat || 'todavia ninguno'));
+    if (!chat) {
+      estado.push('Destino: NINGUNO todavia.');
+      estado.push('  Agrega el bot al grupo y escribe ahi /start@NOMBREDELBOT.');
+    } else if (String(chat).charAt(0) === '-') {
+      estado.push('Destino: grupo ' + chat + '  (correcto)');
+    } else {
+      estado.push('Destino: ' + chat + '  <-- ATENCION: es una CONVERSACION PRIVADA,');
+      estado.push('  no un grupo. Los grupos tienen id negativo, empiezan con guion.');
+      estado.push('  Escribe el id del grupo a mano en TELEGRAM_CHAT_ID y vuelve a implementar.');
+    }
   }
   estado.push('Correo configurado: ' + (EMAIL_TO ? 'si' : 'no'));
   estado.push('WhatsApp configurado: ' + (CALLMEBOT_APIKEY ? 'si' : 'no'));
