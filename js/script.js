@@ -385,9 +385,13 @@
       var textoBoton = boton ? boton.textContent : '';
       var mensajeExito = successBox.querySelector('span');
 
+      var bloquePago = document.getElementById('formPay');
+
       function mostrarExito(texto) {
         if (mensajeExito) mensajeExito.textContent = texto;
         successBox.hidden = false;
+        // El mejor momento para ofrecer el pago anticipado: acaba de decidirse
+        if (bloquePago) bloquePago.hidden = false;
         contactForm.reset();
         if (boton) { boton.disabled = false; boton.textContent = textoBoton; }
       }

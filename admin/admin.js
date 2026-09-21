@@ -185,6 +185,7 @@ function contar() {
   $('statNuevas').textContent     = solicitudes.filter((s) => s.estado === 'nueva').length;
   $('statAgendadas').textContent  = solicitudes.filter((s) => s.estado === 'agendada').length;
   $('statTerminadas').textContent = solicitudes.filter((s) => s.estado === 'terminada').length;
+  $('statPagadas').textContent    = solicitudes.filter((s) => s.pagoAdelantado).length;
   $('statSemana').textContent     = solicitudes.filter((s) =>
     s.createdAt && s.createdAt.toDate && s.createdAt.toDate().getTime() >= semana).length;
 }
@@ -192,7 +193,11 @@ function contar() {
 function filtrar() {
   const texto = busqueda.toLowerCase();
   return solicitudes.filter((s) => {
-    if (filtroEstado !== 'todas' && s.estado !== filtroEstado) return false;
+    if (filtroEstado === 'pagadas') {
+      if (!s.pagoAdelantado) return false;
+    } else if (filtroEstado !== 'todas' && s.estado !== filtroEstado) {
+      return false;
+    }
     if (!texto) return true;
     return [s.nombre, s.telefono, s.email, s.electrodomestico, s.mensaje, s.zona]
       .join(' ').toLowerCase().includes(texto);
@@ -224,7 +229,7 @@ function tarjeta(s) {
       <div>
         <span class="chip chip--${estado}">${ESTADOS[estado]}</span>
         <span class="chip chip--lang">${s.idioma === 'es' ? 'ES' : 'EN'}</span>
-        ${s.pagoAdelantado ? '<span class="chip chip--paid">Pagó $69</span>' : ''}
+        ${s.pagoAdelantado ? '<span class="chip chip--paid">Pagó $79.98</span>' : ''}
         ${veces > 1 ? `<span class="chip chip--repeat">${veces}ª vez que escribe</span>` : ''}
       </div>
     </div>
@@ -263,7 +268,7 @@ function tarjeta(s) {
       <div class="field">
         <label class="check">
           <input type="checkbox" data-accion="pago"${s.pagoAdelantado ? ' checked' : ''}>
-          Pagó por adelantado
+          Pagó los $79.98
         </label>
         <span class="saved" data-guardado>Guardado</span>
       </div>

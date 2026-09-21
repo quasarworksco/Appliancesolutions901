@@ -39,6 +39,9 @@
     <symbol id="a-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
     </symbol>
+    <symbol id="a-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 14.5h3.5"/>
+    </symbol>
     <symbol id="a-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 19h16"/>
     </symbol>
@@ -99,6 +102,10 @@
           <p class="stat__num" id="statAgendadas">0</p>
           <p class="stat__label">Agendadas</p>
         </article>
+        <article class="stat stat--pago">
+          <p class="stat__num" id="statPagadas">0</p>
+          <p class="stat__label">Pagaron por adelantado</p>
+        </article>
         <article class="stat">
           <p class="stat__num" id="statTerminadas">0</p>
           <p class="stat__label">Terminadas</p>
@@ -114,9 +121,15 @@
           <button class="tab" type="button" data-estado="agendada" role="tab" aria-selected="false">Agendadas</button>
           <button class="tab" type="button" data-estado="terminada" role="tab" aria-selected="false">Terminadas</button>
           <button class="tab" type="button" data-estado="perdida" role="tab" aria-selected="false">Perdidas</button>
+          <button class="tab tab--pago" type="button" data-estado="pagadas" role="tab" aria-selected="false">Pagadas</button>
         </div>
         <div class="tools__right">
           <input class="search" id="search" type="search" placeholder="Buscar por nombre, teléfono o electrodoméstico">
+          <a class="btn btn--ghost" href="https://squareup.com/dashboard/sales/transactions" target="_blank" rel="noopener"
+             title="Abrir los pagos recibidos en Square">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><use href="#a-card"></use></svg>
+            Pagos
+          </a>
           <button class="btn btn--ghost" type="button" id="exportBtn" title="Descargar lo que se ve como archivo de Excel">
             <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><use href="#a-download"></use></svg>
             Excel

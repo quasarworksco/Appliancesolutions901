@@ -62,6 +62,39 @@ npx http-server -p 8080 .
 | Instagram  | [@appliance_901](https://www.instagram.com/appliance_901) |
 | Cobertura  | Memphis, TN y alrededores (servicio a domicilio) |
 
+## Pago anticipado (Square)
+
+El cliente puede pagar la visita por adelantado y ahorrar un 10%: **$79.98** en vez de los $89
+que cuesta pagando el día del servicio. En ambos casos el monto se descuenta del total de la
+reparación.
+
+El cobro va por un **enlace de pago alojado de Square**
+(`https://square.link/u/HoCxbR6f`). Los datos de la tarjeta **nunca pasan por este sitio**:
+Square aloja el formulario y asume el cumplimiento PCI. Por eso no hace falta backend y por eso
+el enlace es lo único que hay que mantener actualizado si cambia el precio.
+
+Aparece en tres sitios, por orden de conversión:
+
+1. **Al enviar el formulario** — el bloque de pago se muestra junto al mensaje de éxito. Es el
+   mejor momento: el cliente acaba de decidir.
+2. **En la tarjeta de precio prepago** de la sección "Cuánto Cuesta la Visita".
+3. **En el hero**, una cinta discreta que enlaza a esa sección. Un botón de pago grande ahí le
+   competiría al objetivo principal, que es que te contacten.
+
+**Si cambia el precio** hay que tocarlo en los dos HTML: la tarjeta de precio, la pregunta
+frecuente del presupuesto, el bloque de pago del formulario y el distintivo del panel.
+
+### Verificar los pagos
+
+Un enlace alojado no sabe qué solicitud pagó: llega el dinero, pero no viene atado a un cliente
+de la base de datos. Por eso conviene configurar el enlace en Square para que **pida nombre y
+teléfono** al pagar.
+
+En el panel hay una casilla "Pagó los $79.98" por solicitud, un contador de cuántas pagaron, una
+pestaña **Pagadas** para filtrarlas y un botón **Pagos** que abre las transacciones en Square.
+De momento la conciliación es manual; el siguiente paso es el webhook de Square hacia el Apps
+Script para que cada pago avise por Telegram.
+
 ## Seguridad del sitio
 
 ### Content-Security-Policy
@@ -279,6 +312,39 @@ enviarte mensajes de WhatsApp. La clave se puede cambiar volviendo a activar el 
 - CallMeBot es un servicio no oficial y gratuito: puede fallar o cambiar sin aviso. Por eso
   el correo de la opción A sirve de respaldo.
 - Apps Script envía hasta unos 100 correos al día con una cuenta de Gmail normal.
+
+## Pago anticipado (Square)
+
+El cliente puede pagar la visita por adelantado y ahorrar un 10%: **$79.98** en vez de los $89
+que cuesta pagando el día del servicio. En ambos casos el monto se descuenta del total de la
+reparación.
+
+El cobro va por un **enlace de pago alojado de Square**
+(`https://square.link/u/HoCxbR6f`). Los datos de la tarjeta **nunca pasan por este sitio**:
+Square aloja el formulario y asume el cumplimiento PCI. Por eso no hace falta backend y por eso
+el enlace es lo único que hay que mantener actualizado si cambia el precio.
+
+Aparece en tres sitios, por orden de conversión:
+
+1. **Al enviar el formulario** — el bloque de pago se muestra junto al mensaje de éxito. Es el
+   mejor momento: el cliente acaba de decidir.
+2. **En la tarjeta de precio prepago** de la sección "Cuánto Cuesta la Visita".
+3. **En el hero**, una cinta discreta que enlaza a esa sección. Un botón de pago grande ahí le
+   competiría al objetivo principal, que es que te contacten.
+
+**Si cambia el precio** hay que tocarlo en los dos HTML: la tarjeta de precio, la pregunta
+frecuente del presupuesto, el bloque de pago del formulario y el distintivo del panel.
+
+### Verificar los pagos
+
+Un enlace alojado no sabe qué solicitud pagó: llega el dinero, pero no viene atado a un cliente
+de la base de datos. Por eso conviene configurar el enlace en Square para que **pida nombre y
+teléfono** al pagar.
+
+En el panel hay una casilla "Pagó los $79.98" por solicitud, un contador de cuántas pagaron, una
+pestaña **Pagadas** para filtrarlas y un botón **Pagos** que abre las transacciones en Square.
+De momento la conciliación es manual; el siguiente paso es el webhook de Square hacia el Apps
+Script para que cada pago avise por Telegram.
 
 ## Seguridad del sitio
 
