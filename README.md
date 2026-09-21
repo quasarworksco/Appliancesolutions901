@@ -302,6 +302,12 @@ webhook estorbando, qué avisos ha recibido el bot y a qué chat va a escribir. 
 funciones de apoyo son `borrarWebhook()`, `olvidarGrupo()` (para volver a detectar el grupo si
 lo cambias) y `obtenerChatId()`.
 
+**Lo más fiable es escribir el id del grupo a mano** en `TELEGRAM_CHAT_ID`. La detección
+automática solo funciona dentro de las 24 horas siguientes a agregar el bot; pasado ese plazo,
+si el script había guardado una conversación privada, seguirá usándola. Al abrir la URL `/exec`
+se ve a qué chat está enviando y avisa si es una conversación privada en vez de un grupo (los
+grupos tienen id negativo).
+
 Telegram guarda los avisos solo **24 horas**. Si el bot lleva más tiempo en el grupo sin
 actividad, escribe en el grupo `/start@nombredelbot` para generar uno nuevo: los comandos
 dirigidos al bot le llegan siempre, aunque el modo privacidad esté activado, que es lo que pasa
