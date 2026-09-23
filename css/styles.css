@@ -671,6 +671,11 @@ button,input,select,textarea{font:inherit;color:inherit;}
 }
 .form__pay span{display:block;margin-top:.6rem;font-size:.86rem;color:var(--muted);}
 
+.form__terms{
+  margin:0 0 .9rem;font-size:.82rem;line-height:1.5;color:var(--muted);text-align:center;
+}
+.form__terms a{color:var(--red-dark);font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+
 .form__hint{margin:.9rem 0 0;text-align:center;font-size:.9rem;color:var(--muted);}
 .form__hint a{color:var(--red-dark);font-weight:700;}
 .form__hint a:hover{text-decoration:underline;}
@@ -873,3 +878,44 @@ body{padding-bottom:76px;}
 
 /* la tarjeta suelta (mantenimiento) va sola y centrada en todos los tamanos */
 .cards--solo{grid-template-columns:1fr;max-width:540px;margin-inline:auto;}
+
+/* =========================================================
+   PÁGINAS LEGALES (términos y condiciones)
+   ========================================================= */
+.legal__top{background:var(--white);border-bottom:1px solid var(--line);}
+.legal__top-inner{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  padding-block:.9rem;
+}
+.legal__top-links{display:flex;align-items:center;gap:1rem;}
+.legal__top-links a:not(.btn){font-weight:600;font-size:.9rem;color:var(--muted);}
+.legal__top-links a:not(.btn):hover{color:var(--red);}
+
+.legal{padding-block:clamp(2rem,6vw,3.5rem);background:var(--bg-soft);}
+.legal__inner{max-width:760px;}
+.legal h1{font-size:clamp(1.7rem,5vw,2.4rem);margin-bottom:.75rem;}
+.legal__intro{font-size:clamp(1rem,2.4vw,1.1rem);color:var(--ink-2);}
+.legal__date{
+  margin-bottom:2rem;font-size:.85rem;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);
+}
+.legal h2{
+  margin-top:2.25rem;padding-top:1.5rem;border-top:1px solid var(--line);
+  font-size:clamp(1.15rem,3vw,1.35rem);
+}
+.legal p{color:var(--ink-2);}
+.legal strong{color:var(--ink);}
+.legal a{color:var(--red-dark);font-weight:600;text-decoration:underline;text-underline-offset:3px;}
+.legal a:hover{color:var(--red);}
+
+.legal__contact{
+  margin-top:2.5rem;padding:1.5rem;background:var(--white);
+  border:1px solid var(--line);border-radius:var(--radius);
+}
+.legal__contact h2{margin-top:0;padding-top:0;border-top:0;font-size:1.1rem;}
+.legal__contact p{margin-bottom:0;}
+
+.legal__foot{background:#12212a;color:rgba(255,255,255,.6);text-align:center;}
+.legal__foot .container{padding-block:1.5rem;}
+.legal__foot p{margin:0 0 .3rem;font-size:.86rem;}
+.legal__foot a{color:#fff;text-decoration:underline;text-underline-offset:3px;}
