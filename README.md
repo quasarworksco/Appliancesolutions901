@@ -12,6 +12,8 @@ como versión alterna, con un selector EN/ES en el header.
 ```
 index.html        Versión en INGLÉS (principal) — se sirve en /
 es/index.html     Versión en ESPAÑOL — se sirve en /es/
+terms.html        Términos y condiciones (inglés)
+es/terminos.html  Términos y condiciones (español)
 css/styles.css    Estilos compartidos (mobile-first, con tokens de color y tipografía)
 css/fonts.css     @font-face de las fuentes auto-hospedadas
 fonts/            Inter, Poppins y Chakra Petch (subconjunto latino, .woff2)
@@ -132,7 +134,21 @@ una limitación: las directivas `frame-ancestors`, `report-uri` y `sandbox` **so
 cabecera**, no en `<meta>`. Si algún día el sitio se mueve a un hosting con cabeceras
 (Vercel, Cloudflare, Netlify), conviene añadir `frame-ancestors 'none'` contra el clickjacking.
 
-### Pendiente de configurar en las consolas
+### Términos y condiciones
+
+Están en `terms.html` y `es/terminos.html`, con el mismo encabezado y tipografía del sitio.
+Se enlazan desde el footer de las dos páginas y desde una línea bajo el botón de enviar del
+formulario, porque los términos dicen que al confirmar una cita el cliente los acepta.
+
+Lo que fijan, en resumen: servicio a domicilio con cita previa, el cliente debe dar acceso al
+equipo, **garantía de 30 días** sobre el problema original y la pieza reemplazada, sin
+reembolsos salvo que la misma falla se reporte dentro de esos 30 días y no se logre reparar, y
+posible cobro de visita si el técnico no puede trabajar por causas ajenas a la empresa.
+
+La garantía de 30 días también está ahora en la tarjeta "Trabajo Respaldado" y en la pregunta
+frecuente correspondiente, que antes decían "pregúntanos por los detalles".
+
+## Pendiente de configurar en las consolas
 
 Dos cosas que no se pueden hacer desde el código:
 
@@ -143,6 +159,20 @@ Dos cosas que no se pueden hacer desde el código:
    que queda.
 2. **Restringir la API key por dominio** (Google Cloud Console → APIs y servicios →
    Credenciales → la clave del proyecto → Restricciones de aplicación → Sitios web).
+
+## Términos y condiciones
+
+Están en `terms.html` y `es/terminos.html`, con el mismo encabezado y tipografía del sitio.
+Se enlazan desde el footer de las dos páginas y desde una línea bajo el botón de enviar del
+formulario, porque los términos dicen que al confirmar una cita el cliente los acepta.
+
+Lo que fijan, en resumen: servicio a domicilio con cita previa, el cliente debe dar acceso al
+equipo, **garantía de 30 días** sobre el problema original y la pieza reemplazada, sin
+reembolsos salvo que la misma falla se reporte dentro de esos 30 días y no se logre reparar, y
+posible cobro de visita si el técnico no puede trabajar por causas ajenas a la empresa.
+
+La garantía de 30 días también está ahora en la tarjeta "Trabajo Respaldado" y en la pregunta
+frecuente correspondiente, que antes decían "pregúntanos por los detalles".
 
 ## Pendientes marcados en el código (`TODO`)
 
@@ -402,7 +432,21 @@ una limitación: las directivas `frame-ancestors`, `report-uri` y `sandbox` **so
 cabecera**, no en `<meta>`. Si algún día el sitio se mueve a un hosting con cabeceras
 (Vercel, Cloudflare, Netlify), conviene añadir `frame-ancestors 'none'` contra el clickjacking.
 
-### Pendiente de configurar en las consolas
+### Términos y condiciones
+
+Están en `terms.html` y `es/terminos.html`, con el mismo encabezado y tipografía del sitio.
+Se enlazan desde el footer de las dos páginas y desde una línea bajo el botón de enviar del
+formulario, porque los términos dicen que al confirmar una cita el cliente los acepta.
+
+Lo que fijan, en resumen: servicio a domicilio con cita previa, el cliente debe dar acceso al
+equipo, **garantía de 30 días** sobre el problema original y la pieza reemplazada, sin
+reembolsos salvo que la misma falla se reporte dentro de esos 30 días y no se logre reparar, y
+posible cobro de visita si el técnico no puede trabajar por causas ajenas a la empresa.
+
+La garantía de 30 días también está ahora en la tarjeta "Trabajo Respaldado" y en la pregunta
+frecuente correspondiente, que antes decían "pregúntanos por los detalles".
+
+## Pendiente de configurar en las consolas
 
 Dos cosas que no se pueden hacer desde el código:
 
@@ -413,6 +457,20 @@ Dos cosas que no se pueden hacer desde el código:
    que queda.
 2. **Restringir la API key por dominio** (Google Cloud Console → APIs y servicios →
    Credenciales → la clave del proyecto → Restricciones de aplicación → Sitios web).
+
+## Términos y condiciones
+
+Están en `terms.html` y `es/terminos.html`, con el mismo encabezado y tipografía del sitio.
+Se enlazan desde el footer de las dos páginas y desde una línea bajo el botón de enviar del
+formulario, porque los términos dicen que al confirmar una cita el cliente los acepta.
+
+Lo que fijan, en resumen: servicio a domicilio con cita previa, el cliente debe dar acceso al
+equipo, **garantía de 30 días** sobre el problema original y la pieza reemplazada, sin
+reembolsos salvo que la misma falla se reporte dentro de esos 30 días y no se logre reparar, y
+posible cobro de visita si el técnico no puede trabajar por causas ajenas a la empresa.
+
+La garantía de 30 días también está ahora en la tarjeta "Trabajo Respaldado" y en la pregunta
+frecuente correspondiente, que antes decían "pregúntanos por los detalles".
 
 ## Pendiente
 
