@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://appliancesolutions901.dgp-link.com/sitemap.xml
+Sitemap: https://appliancesolution901.com/sitemap.xml
