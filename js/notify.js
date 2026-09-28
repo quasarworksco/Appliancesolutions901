@@ -29,7 +29,7 @@ function armarTexto(lead, guardado) {
     lineas.push('', 'Mensaje: ' + String(lead.mensaje).slice(0, 400));
   }
   if (guardado !== false) {
-    lineas.push('', 'Panel: https://appliancesolutions901.dgp-link.com/admin/');
+    lineas.push('', 'Panel: https://appliancesolution901.com/admin/');
   }
   return lineas.join('\n');
 }
