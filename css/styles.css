@@ -752,6 +752,14 @@ button,input,select,textarea{font:inherit;color:inherit;}
   padding-block:1.25rem;
 }
 .footer__bottom p{margin:0;font-size:.85rem;color:rgba(255,255,255,.55);}
+/* Firma del estudio: discreta, pero con enlace legible y foco visible */
+.footer__sign a{
+  color:#fff;font-weight:600;text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,.35);
+  transition:border-color .2s ease,color .2s ease;
+}
+.footer__sign a:hover,.footer__sign a:focus-visible{color:var(--blue);border-bottom-color:var(--blue);}
+.legal__foot .footer__sign a{text-decoration:none;}
 
 /* ---------- BOTONES FLOTANTES ---------- */
 /* Mobile: barra fija inferior · Escritorio: columna fija a la derecha */
