@@ -56,8 +56,11 @@ function vecesQueLlamo(s) {
 function enlaceMapa(s) {
   // Con solo el código postal no se llega a ninguna casa: mejor no ofrecer el botón
   if (!s.direccion) return '';
-  const destino = s.direccion + (s.zona && s.direccion.indexOf(s.zona) === -1 ? ' ' + s.zona : '');
-  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(destino + ' Memphis TN');
+  let destino = s.direccion + (s.zona && s.direccion.indexOf(s.zona) === -1 ? ' ' + s.zona : '');
+  // Atendemos Memphis y Nashville, así que ya no se puede asumir la ciudad:
+  // solo agregamos el estado cuando el cliente no lo escribió.
+  if (!/\b(TN|Tennessee)\b/i.test(destino)) destino += ' TN';
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(destino);
 }
 
 function fechaLarga(ts) {

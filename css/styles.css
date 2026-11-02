@@ -549,6 +549,39 @@ button,input,select,textarea{font:inherit;color:inherit;}
 .about__facts strong{font-family:var(--font-head);font-size:1rem;color:var(--ink);line-height:1.3;}
 .about__facts span{font-size:.88rem;color:var(--muted);}
 
+/* ---------- ZONAS DE SERVICIO (SECCION OSCURA) ---------- */
+.areas__grid{display:grid;grid-template-columns:1fr;gap:1.1rem;}
+.area-card{
+  padding:1.35rem 1.25rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);
+}
+.area-card__head{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:1.15rem;}
+.area-card__icon{
+  display:grid;place-items:center;flex:none;width:44px;height:44px;
+  border-radius:12px;background:rgba(214,40,40,.24);color:#FF9A9A;
+}
+.area-card__head h3{margin:0;font-family:var(--font-head);font-size:1.1rem;color:#fff;line-height:1.3;}
+.area-card__head p{margin:.2rem 0 0;font-size:.88rem;color:rgba(255,255,255,.65);}
+/* cada poblacion es una pastilla: se acomodan solas sin romper el ancho */
+.area-card__list{display:flex;flex-wrap:wrap;gap:.45rem;list-style:none;margin:0;padding:0;}
+.area-card__list li{
+  padding:.32rem .72rem;border-radius:999px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
+  font-size:.83rem;color:rgba(255,255,255,.88);
+}
+.areas__note{margin:1.5rem 0 0;text-align:center;font-size:.93rem;color:rgba(255,255,255,.72);}
+.areas__note a{
+  color:#fff;font-weight:700;
+  border-bottom:1px solid rgba(255,255,255,.4);
+  transition:border-color .2s var(--ease),color .2s var(--ease);
+}
+.areas__note a:hover,.areas__note a:focus-visible{color:var(--blue);border-bottom-color:var(--blue);}
+@media (min-width:768px){
+  .areas__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4rem;}
+  .area-card{padding:1.6rem 1.5rem;}
+}
+
 /* ---------- TESTIMONIOS (CARRUSEL) ---------- */
 .carousel{position:relative;}
 .carousel__track{
