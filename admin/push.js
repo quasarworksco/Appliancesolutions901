@@ -1,4 +1,4 @@
-import { PANEL_PUSH_URL } from '../js/firebase-config.js';
+import { PANEL_PUSH_URL } from '../js/firebase-config.js?v=push-1';
 
 export function setupPanelPush(auth) {
   const activate = document.getElementById('pushEnable');
