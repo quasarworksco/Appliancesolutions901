@@ -45,6 +45,25 @@ no se desincronicen.
 Cada archivo lleva su `canonical` y las etiquetas `hreflang` (`en`, `es` y `x-default`
 apuntando al inglés), para que Google indexe ambas sin considerarlas contenido duplicado.
 
+### Páginas locales y sitemap
+
+Las páginas de cobertura del área de Memphis se publican en `/service-areas/<zona>/` y
+`/es/zonas/<zona>/`. Ambas portadas las enlazan desde su sección de cobertura. El sitemap
+incluye las páginas públicas con sus equivalentes en ambos idiomas y se anuncia en `robots.txt`.
+
+El contenido específico de cada zona vive en `scripts/locations.py`. Después de editarlo,
+regenera y verifica el HTML y el sitemap con Python 3.9 o posterior.
+
+```bash
+python3 scripts/generate_local_seo.py
+python3 scripts/generate_local_seo.py --check
+```
+
+Si agregas una zona con cobertura confirmada, enlázala desde ambas portadas y actualiza
+`areaServed` en sus datos estructurados y el directorio en `Novedades/index.html`. Si retiras una zona, retira también sus dos archivos
+HTML generados y los enlaces correspondientes. GitHub Pages sirve los archivos generados
+directamente. Después de desplegar, puedes enviar `sitemap.xml` en Google Search Console.
+
 ## Cómo verla
 
 No necesita servidor: se puede abrir `index.html` en el navegador.
