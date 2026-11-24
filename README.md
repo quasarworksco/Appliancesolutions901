@@ -60,7 +60,7 @@ python3 scripts/generate_local_seo.py --check
 ```
 
 Si agregas una zona con cobertura confirmada, enlázala desde ambas portadas y actualiza
-`areaServed` en sus datos estructurados y el directorio en `Novedades/index.html`. Si retiras una zona, retira también sus dos archivos
+`areaServed` en sus datos estructurados y el directorio en `novedades/index.html`. Si retiras una zona, retira también sus dos archivos
 HTML generados y los enlaces correspondientes. GitHub Pages sirve los archivos generados
 directamente. Después de desplegar, puedes enviar `sitemap.xml` en Google Search Console.
 

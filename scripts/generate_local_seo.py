@@ -273,7 +273,7 @@ def render_sitemap():
                 ET.SubElement(item, f"{{{XHTML_NS}}}link",
                               rel="alternate", hreflang=language, href=url)
     news = ET.SubElement(urlset, f"{{{SITEMAP_NS}}}url")
-    ET.SubElement(news, f"{{{SITEMAP_NS}}}loc").text = ORIGIN + "/Novedades/"
+    ET.SubElement(news, f"{{{SITEMAP_NS}}}loc").text = ORIGIN + "/novedades/"
     ET.indent(urlset, space="  ")
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(urlset, encoding="unicode") + "\n"
 
