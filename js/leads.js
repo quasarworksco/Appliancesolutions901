@@ -6,7 +6,7 @@
    Si Firestore no responde, script.js cae al respaldo por correo,
    así no se pierde ninguna solicitud.
    ========================================================= */
-import { firebaseConfig, FIREBASE_SDK, LEADS_COLLECTION } from './firebase-config.js';
+import { firebaseConfig, FIREBASE_SDK, LEADS_COLLECTION, PANEL_PUSH_URL } from './firebase-config.js?v=push-requests-1';
 import { notifyNewLead, notifyPaymentIntent } from './notify.js';
 
 const CDN = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK}`;
@@ -56,11 +56,33 @@ async function saveLead(datos) {
   let leadId;
   try {
     const { db, firestore } = await getDb();
-    const { collection, addDoc, serverTimestamp } = firestore;
-    const doc = await addDoc(collection(db, LEADS_COLLECTION),
-      Object.assign({}, solicitud, { createdAt: serverTimestamp() }));
-    leadId = doc.id;
+    const { collection, doc, setDoc, serverTimestamp, writeBatch } = firestore;
+    const lead = doc(collection(db, LEADS_COLLECTION));
+    const data = { ...solicitud, createdAt: serverTimestamp() };
+    let pushReceipt = false;
+    if (PANEL_PUSH_URL) {
+      const batch = writeBatch(db);
+      batch.set(lead, data);
+      batch.set(doc(db, 'leadPushReceipts', lead.id), { createdAt: serverTimestamp() });
+      try {
+        await batch.commit();
+        pushReceipt = true;
+      } catch (error) {
+        if (error.code !== 'permission-denied') throw error;
+        // Durante el despliegue, las reglas anteriores todavía permiten guardar la solicitud.
+        await setDoc(lead, data);
+      }
+    } else {
+      await setDoc(lead, data);
+    }
+    leadId = lead.id;
     guardado = true;
+    if (pushReceipt) {
+      fetch(PANEL_PUSH_URL + '/new-request', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: leadId }), keepalive: true
+      }).catch(() => {});
+    }
   } catch (err) {
     console.error('[AS901] No se pudo guardar la solicitud en Firestore:', err);
   }

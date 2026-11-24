@@ -1,6 +1,7 @@
 import { cifrarPush, firmaVapid, vapidPublica } from './web-push.mjs';
 
 const ORIGIN = 'https://appliancesolution901.com';
+const RECEIPT_URL = 'https://firestore.googleapis.com/v1/projects/yeanochoa-4b1c9/databases/(default)/documents/leadPushReceipts/';
 const DEVICE_PREFIX = 'device:';
 const DEVICE_LIMIT = 20;
 const TEST_COOLDOWN_MS = 5000;
@@ -67,17 +68,31 @@ async function handle(request, env) {
   if (!env.VAPID_PRIVATE_JWK) return json({ error: 'Falta configurar Web Push.' }, 503);
   const jwk = JSON.parse(env.VAPID_PRIVATE_JWK);
   if (route === '/public-key' && request.method === 'GET') return json({ key: vapidPublica(jwk) });
-  if (request.method !== 'POST' || !['/lead', '/enable', '/disable', '/test'].includes(route)) {
+  if (request.method !== 'POST' || !['/lead', '/new-request', '/enable', '/disable', '/test'].includes(route)) {
     return json({ error: 'Ruta desconocida.' }, 404);
   }
-  if (route === '/lead') {
-    const provided = request.headers.get('Authorization') || '';
-    const expected = 'Bearer ' + env.PUSH_RELAY_SECRET;
-    const encode = value => new TextEncoder().encode(value);
-    const [a, b] = await Promise.all([provided, expected].map(value => crypto.subtle.digest('SHA-256', encode(value))));
-    if (!env.PUSH_RELAY_SECRET || !crypto.subtle.timingSafeEqual(a, b)) return json({ error: 'Acceso denegado.' }, 403);
+  if (route === '/lead' || route === '/new-request') {
     const { id } = await request.json();
     if (typeof id !== 'string' || !/^[A-Za-z0-9]{20}$/.test(id)) return json({ error: 'Solicitud inválida.' }, 400);
+    if (route === '/new-request') {
+      if (origin !== ORIGIN) return json({ error: 'Origen inválido.' }, 403);
+      const receipt = await fetch(RECEIPT_URL + id, { redirect: 'manual' });
+      if (!receipt.ok) return json({ error: 'No se pudo verificar el recibo.' }, 403);
+      const doc = await receipt.json();
+      const age = Date.now() - Date.parse(doc.fields?.createdAt?.timestampValue);
+      if (!Number.isFinite(age) || age < -30000 || age > 300000) {
+        return json({ error: 'El recibo no es reciente.' }, 403);
+      }
+    } else {
+      const provided = request.headers.get('Authorization') || '';
+      const expected = 'Bearer ' + env.PUSH_RELAY_SECRET;
+      const encode = value => new TextEncoder().encode(value);
+      const [a, b] = await Promise.all([provided, expected].map(value => crypto.subtle.digest('SHA-256', encode(value))));
+      if (!env.PUSH_RELAY_SECRET || !crypto.subtle.timingSafeEqual(a, b)) return json({ error: 'Acceso denegado.' }, 403);
+    }
+    const sentKey = 'sent:' + id;
+    if (await env.DEVICES.get(sentKey)) return json({ accepted: 0 });
+    await env.DEVICES.put(sentKey, '1', { expirationTtl: 600 });
     const { keys } = await env.DEVICES.list({ prefix: DEVICE_PREFIX, limit: DEVICE_LIMIT });
     const results = await Promise.allSettled(keys.map(async ({ name }) =>
       push(env, jwk, name, await env.DEVICES.get(name, 'json'), { kind: 'lead', id })));

@@ -105,6 +105,16 @@ service cloud.firestore {
                         || citaDelTurno(resource.data.leadId) != slotId);
     }
 
+    // Recibo sin datos del cliente. Solo se puede crear junto con la solicitud.
+    match /leadPushReceipts/{leadId} {
+      allow get: if true;
+      allow create: if leadId.matches('[A-Za-z0-9]{20}')
+                    && request.resource.data.keys().hasOnly(['createdAt'])
+                    && request.resource.data.createdAt == request.time
+                    && !exists(/databases/$(database)/documents/leads/$(leadId))
+                    && getAfter(/databases/$(database)/documents/leads/$(leadId)).data.createdAt == request.time;
+    }
+
     // Cualquier otra colección queda cerrada
     match /{document=**} {
       allow read, write: if false;
