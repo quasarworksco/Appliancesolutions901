@@ -1,1 +1,5 @@
 undefined/
+functions/node_modules/
+push-relay/wrangler.toml
+push-relay/.dev.vars*
+push-relay/.wrangler/

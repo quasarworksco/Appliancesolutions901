@@ -56,11 +56,11 @@ export function notifyPaymentIntent(lead) {
 /**
  * Manda el aviso. Nunca lanza ni hace esperar al visitante.
  */
-export function notifyNewLead(lead, guardado) {
-  enviar(armarTexto(lead, guardado), lead, 'solicitud', guardado);
+export function notifyNewLead(lead, guardado, leadId) {
+  enviar(armarTexto(lead, guardado), lead, 'solicitud', guardado, leadId);
 }
 
-function enviar(texto, lead, tipo, guardado) {
+function enviar(texto, lead, tipo, guardado, leadId) {
   try {
     // Opción A: el script de Google reenvía a WhatsApp y al correo
     if (NOTIFY_URL) {
@@ -70,7 +70,7 @@ function enviar(texto, lead, tipo, guardado) {
         // text/plain evita la petición previa de CORS que Apps Script no responde
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ token: NOTIFY_TOKEN, texto: texto, lead: lead,
-                               tipo: tipo, guardado: guardado !== false })
+                               tipo: tipo, leadId: leadId, guardado: guardado !== false })
       }).catch(function () { /* el aviso es opcional */ });
       return;
     }

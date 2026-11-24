@@ -1,0 +1,14 @@
+{
+  "id": "/admin/",
+  "name": "Appliance Solutions 901 · Panel",
+  "short_name": "AS901 Panel",
+  "lang": "es",
+  "start_url": "/admin/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#12212a",
+  "icons": [
+    { "src": "/images/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

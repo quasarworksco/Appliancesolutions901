@@ -188,3 +188,19 @@ button,input,select,textarea{font:inherit;color:inherit;}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:.001ms!important;}
 }
+
+.panel-settings{margin-bottom:1rem;}
+.panel-settings summary{width:fit-content;cursor:pointer;font-size:.875rem;font-weight:600;}
+.panel-settings p{margin:.5rem 0;color:var(--muted);font-size:.875rem;}
+.panel-settings__actions{display:flex;gap:.5rem;flex-wrap:wrap;}
+.panel-settings__actions .btn{padding:.4rem .65rem;font-size:.825rem;}
+.panel-settings__actions [hidden]{display:none;}
+
+.appointment-agenda label{display:block;margin-top:.75rem;font-size:.85rem;}
+.appointment-agenda ul{padding-left:1.2rem;font-size:.875rem;}
+.appointment-agenda li{margin:.3rem 0;}
+.lead__appointment{color:var(--ink);font-size:.9rem;}
+#appointmentDialog{width:min(90vw,30rem);max-height:90dvh;padding:1.25rem;border:1px solid var(--line);border-radius:12px;color:var(--ink);}
+#appointmentDialog::backdrop{background:rgba(0,0,0,.45);}
+#appointmentDialog .field{margin-block:.75rem;}
+#appointmentError{color:#a51c1c;}

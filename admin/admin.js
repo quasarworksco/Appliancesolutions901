@@ -7,7 +7,10 @@
    ========================================================= */
 import { firebaseConfig, FIREBASE_SDK, ADMIN_EMAIL_DOMAIN, LEADS_COLLECTION }
   from '../js/firebase-config.js';
+import { setupPanelPush } from './push.js';
+import { WINDOWS, centralToday, updateAppointment } from './appointments.js';
 
+const TURNOS = Object.entries(WINDOWS).sort(([a], [b]) => a.localeCompare(b));
 const CDN = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK}`;
 
 const ESTADOS = {
@@ -23,7 +26,7 @@ const loginView = $('loginView');
 const appView   = $('appView');
 const banner    = $('banner');
 
-let db, auth, fs, authMod;
+let db, auth, fs, authMod, disableDevicePush;
 let solicitudes = [];
 let filtroEstado = 'todas';
 let busqueda = '';
@@ -91,16 +94,24 @@ async function cargarFirebase() {
   auth = authentication.getAuth(app);
   await authentication.setPersistence(auth, authentication.browserLocalPersistence);
   return authentication.onAuthStateChanged(auth, (usuario) => {
-    if (usuario) abrirPanel(usuario); else mostrarLogin();
+    if (usuario) {
+      abrirPanel(usuario);
+      disableDevicePush ||= setupPanelPush(auth);
+    } else {
+      mostrarLogin();
+    }
   });
 }
 
 /* ---------- login ---------- */
 
 function mostrarLogin() {
+  desuscribir?.();
+  desuscribir = null;
   appView.hidden = true;
   loginView.hidden = false;
   solicitudes = [];
+  $('appointmentDialog').close();
 }
 
 $('loginForm').addEventListener('submit', async (e) => {
@@ -151,7 +162,22 @@ $('loginForm').addEventListener('submit', async (e) => {
   }
 });
 
-$('logoutBtn').addEventListener('click', () => authMod.signOut(auth));
+$('logoutBtn').addEventListener('click', async () => {
+  const button = $('logoutBtn');
+  button.disabled = true;
+  try {
+    await disableDevicePush?.();
+  } catch {
+    avisar('No se pudieron desactivar los avisos de este dispositivo. Puedes volver a intentarlo desde Configuración.');
+  }
+  try {
+    await authMod.signOut(auth);
+  } catch {
+    avisar('No se pudo cerrar la sesión. Inténtalo de nuevo.');
+  } finally {
+    button.disabled = false;
+  }
+});
 
 /* ---------- panel ---------- */
 
@@ -159,6 +185,8 @@ function abrirPanel(usuario) {
   loginView.hidden = true;
   appView.hidden = false;
   $('topbarUser').textContent = (usuario.email || '').split('@')[0];
+  $('agendaDate').value ||= centralToday();
+  pintarAgenda();
   escucharSolicitudes();
 }
 
@@ -237,6 +265,8 @@ function tarjeta(s) {
       </div>
     </div>
 
+    ${s.citaFecha && Object.hasOwn(WINDOWS, s.citaTurno)
+      ? `<p class="lead__appointment"><strong>Cita:</strong> ${escapar(s.citaFecha)} · ${WINDOWS[s.citaTurno]} (Memphis)</p>` : ''}
     ${s.mensaje ? `<p class="lead__msg">${escapar(s.mensaje)}</p>` : ''}
 
     <div class="lead__actions">
@@ -252,6 +282,10 @@ function tarjeta(s) {
       ${mapa ? `<a class="act act--map" href="${mapa}" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#a-pin"></use></svg>
         Cómo llegar</a>` : ''}
+      ${estado !== 'terminada' && estado !== 'perdida'
+        ? `<button class="act" type="button" data-accion="cita">${s.citaFecha ? 'Reprogramar cita' : 'Confirmar cita'}</button>`
+        : ''}
+      ${s.citaFecha && estado === 'agendada' ? '<button class="act" type="button" data-accion="cancelar-cita">Cancelar cita</button>' : ''}
       <button class="act act--del" type="button" data-accion="borrar">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><use href="#a-trash"></use></svg>
         Borrar
@@ -281,6 +315,8 @@ function tarjeta(s) {
 
 function pintar() {
   contar();
+  pintarAgenda();
+  if ($('appointmentDialog').open) pintarTurnos();
   const lista = filtrar();
   const cont = $('leads');
   cont.innerHTML = lista.map(tarjeta).join('');
@@ -313,7 +349,26 @@ $('leads').addEventListener('change', (e) => {
   const id = tarjeta.dataset.id;
   const accion = e.target.dataset.accion;
 
-  if (accion === 'estado') guardar(id, { estado: e.target.value }, e.target);
+  if (accion === 'estado') {
+    const original = solicitudes.find(s => s.id === id);
+    if (!original) return;
+    const state = e.target.value;
+    if (state === 'agendada') {
+      e.target.value = original.estado;
+      abrirCita(original);
+    } else if (original.citaFecha && state !== 'terminada') {
+      if (!confirm('Este cambio liberará el turno. ¿Continuar?')) {
+        e.target.value = original.estado;
+        return;
+      }
+      updateAppointment(fs, db, LEADS_COLLECTION, id, null, { state }).catch(error => {
+        e.target.value = original.estado;
+        avisar(error.message || 'No se pudo liberar el turno.');
+      });
+    } else {
+      guardar(id, { estado: state }, e.target);
+    }
+  }
   if (accion === 'pago')   guardar(id, { pagoAdelantado: e.target.checked }, e.target);
 });
 
@@ -328,17 +383,92 @@ $('leads').addEventListener('focusout', (e) => {
 });
 
 $('leads').addEventListener('click', async (e) => {
-  const boton = e.target.closest('[data-accion="borrar"]');
+  const boton = e.target.closest('button[data-accion]');
   if (!boton) return;
   const tarjeta = boton.closest('.lead');
   const id = tarjeta.dataset.id;
+  if (boton.dataset.accion === 'cita') {
+    const solicitud = solicitudes.find(s => s.id === id);
+    if (solicitud) abrirCita(solicitud);
+    return;
+  }
+  if (boton.dataset.accion === 'cancelar-cita') {
+    if (!confirm('¿Cancelar esta cita y liberar el turno?')) return;
+    try {
+      await updateAppointment(fs, db, LEADS_COLLECTION, id, null);
+    } catch (error) {
+      avisar(error.message || 'No se pudo cancelar la cita.');
+    }
+    return;
+  }
+  if (boton.dataset.accion !== 'borrar') return;
   const nombre = tarjeta.querySelector('h3').textContent;
   if (!confirm(`¿Borrar la solicitud de ${nombre}? Esto no se puede deshacer.`)) return;
   try {
-    await fs.deleteDoc(fs.doc(db, LEADS_COLLECTION, id));
+    await updateAppointment(fs, db, LEADS_COLLECTION, id, null, { removeLead: true });
   } catch (err) {
     console.error(err);
     avisar('No se pudo borrar la solicitud.');
+  }
+});
+
+/* ---------- citas ---------- */
+
+function pintarAgenda() {
+  const date = $('agendaDate').value;
+  $('agendaSlots').innerHTML = date ? TURNOS.map(([window, label]) => {
+    const appointment = solicitudes.find(s => s.citaFecha === date && s.citaTurno === window);
+    return `<li><strong>${label}</strong> · ${appointment ? escapar(appointment.nombre) : 'Disponible'}</li>`;
+  }).join('') : '';
+}
+
+function pintarTurnos() {
+  const form = $('appointmentForm');
+  const select = $('appointmentWindow');
+  const selected = select.value;
+  const date = $('appointmentDate').value;
+  const taken = new Set(solicitudes.filter(s => s.citaFecha === date && s.id !== form.dataset.leadId)
+    .map(s => s.citaTurno));
+  select.innerHTML = '<option value="">Selecciona un turno</option>' + TURNOS
+    .map(([key, label]) => `<option value="${key}"${taken.has(key) ? ' disabled' : ''}>${label}${taken.has(key) ? ' (ocupado)' : ''}</option>`)
+    .join('');
+  select.value = selected && !taken.has(selected) ? selected : '';
+}
+
+function abrirCita(solicitud) {
+  const today = centralToday();
+  $('appointmentForm').dataset.leadId = solicitud.id;
+  $('appointmentDate').min = today;
+  $('appointmentDate').value = solicitud.citaFecha && solicitud.citaFecha >= today ? solicitud.citaFecha : today;
+  $('appointmentWindow').value = '';
+  $('appointmentError').hidden = true;
+  pintarTurnos();
+  if (solicitud.citaFecha === $('appointmentDate').value) $('appointmentWindow').value = solicitud.citaTurno;
+  $('appointmentDialog').showModal();
+}
+
+$('agendaDate').addEventListener('change', pintarAgenda);
+$('appointmentDate').addEventListener('change', pintarTurnos);
+$('appointmentClose').addEventListener('click', () => $('appointmentDialog').close());
+$('appointmentForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const date = $('appointmentDate').value;
+  const window = $('appointmentWindow').value;
+  if (date < centralToday() || !Object.hasOwn(WINDOWS, window)) return;
+  const error = $('appointmentError');
+  const button = $('appointmentSave');
+  error.hidden = true;
+  button.disabled = true;
+  try {
+    await updateAppointment(fs, db, LEADS_COLLECTION, event.target.dataset.leadId, { date, window });
+    $('agendaDate').value = date;
+    pintarAgenda();
+    $('appointmentDialog').close();
+  } catch (err) {
+    error.textContent = err.code === 'permission-denied' ? 'Falta publicar las reglas de Firestore para la agenda.' : err.message;
+    error.hidden = false;
+  } finally {
+    button.disabled = false;
   }
 });
 

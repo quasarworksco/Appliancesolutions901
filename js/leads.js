@@ -53,11 +53,13 @@ async function saveLead(datos) {
   };
 
   let guardado = false;
+  let leadId;
   try {
     const { db, firestore } = await getDb();
     const { collection, addDoc, serverTimestamp } = firestore;
-    await addDoc(collection(db, LEADS_COLLECTION),
+    const doc = await addDoc(collection(db, LEADS_COLLECTION),
       Object.assign({}, solicitud, { createdAt: serverTimestamp() }));
+    leadId = doc.id;
     guardado = true;
   } catch (err) {
     console.error('[AS901] No se pudo guardar la solicitud en Firestore:', err);
@@ -66,7 +68,7 @@ async function saveLead(datos) {
   // El aviso sale SIEMPRE, se haya guardado o no. Si no se guardó, el mensaje
   // lo advierte para que la solicitud se registre a mano.
   try {
-    notifyNewLead(solicitud, guardado);
+    notifyNewLead(solicitud, guardado, leadId);
   } catch (err) {
     console.warn('[AS901] Falló el aviso:', err);
   }

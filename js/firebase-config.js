@@ -55,3 +55,6 @@ export const CALLMEBOT = {
   phone: "19016862035",   // tu número con código de país, sin + ni espacios
   apikey: ""              // la clave que te da CallMeBot al activar el servicio
 };
+
+// URL HTTPS del Worker Web Push, sin barra final.
+export const PANEL_PUSH_URL = '';

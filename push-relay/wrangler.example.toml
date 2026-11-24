@@ -1,0 +1,11 @@
+name = "as901-panel-push"
+main = "worker.mjs"
+compatibility_date = "2026-11-24"
+
+[vars]
+FIREBASE_API_KEY = "REEMPLAZAR_CON_LA_CLAVE_PUBLICA_DE_FIREBASE"
+PUSH_ADMIN_UID = "REEMPLAZAR_CON_EL_UID_DEL_ADMIN"
+
+[[kv_namespaces]]
+binding = "DEVICES"
+id = "REEMPLAZAR_CON_EL_ID_DE_KV"

@@ -14,6 +14,8 @@
   <meta name="theme-color" content="#12212a">
 
   <link rel="icon" href="../images/favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="manifest" href="panel.webmanifest">
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="admin.css">
 </head>
@@ -88,6 +90,15 @@
     </header>
 
     <main class="wrap">
+      <details class="panel-settings">
+        <summary>Configuración</summary>
+        <p id="pushStatus" role="status">Cargando configuración de avisos…</p>
+        <div class="panel-settings__actions">
+          <button class="btn btn--ghost" type="button" id="pushEnable" disabled>Permitir avisos</button>
+          <button class="btn btn--ghost" type="button" id="pushTest" hidden>Enviar prueba</button>
+          <button class="btn btn--ghost" type="button" id="pushDisable" hidden>Desactivar</button>
+        </div>
+      </details>
       <!-- CONTADORES -->
       <section class="stats" aria-label="Resumen">
         <article class="stat stat--new">
@@ -111,6 +122,14 @@
           <p class="stat__label">Terminadas</p>
         </article>
       </section>
+
+      <details class="panel-settings appointment-agenda">
+        <summary>Agenda de citas</summary>
+        <label for="agendaDate">Fecha (hora de Memphis)</label>
+        <input type="date" id="agendaDate" aria-describedby="agendaBuffer">
+        <p id="agendaBuffer">Reserva los últimos 15 minutos de cada turno para traslados o atrasos.</p>
+        <ul id="agendaSlots" aria-live="polite"></ul>
+      </details>
 
       <!-- FILTROS -->
       <section class="tools">
@@ -146,6 +165,25 @@
         <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true"><use href="#a-inbox"></use></svg>
         <p id="emptyText">Todavía no hay solicitudes.</p>
       </div>
+      <dialog id="appointmentDialog" aria-labelledby="appointmentTitle">
+        <form id="appointmentForm">
+          <h2 id="appointmentTitle">Confirmar una cita</h2>
+          <p>Acuerda primero la ventana de llegada con el cliente. Horarios de Memphis.</p>
+          <div class="field">
+            <label for="appointmentDate">Fecha de la visita</label>
+            <input type="date" id="appointmentDate" required>
+          </div>
+          <div class="field">
+            <label for="appointmentWindow">Turno de dos horas</label>
+            <select id="appointmentWindow" required></select>
+          </div>
+          <p id="appointmentError" role="alert" hidden></p>
+          <div class="panel-settings__actions">
+            <button class="btn btn--red" type="submit" id="appointmentSave">Confirmar turno</button>
+            <button class="btn btn--ghost" type="button" id="appointmentClose">Cerrar</button>
+          </div>
+        </form>
+      </dialog>
     </main>
   </div>
 

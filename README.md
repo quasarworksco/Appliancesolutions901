@@ -497,3 +497,58 @@ frecuente correspondiente, que antes decían "pregúntanos por los detalles".
 - Fase 2 del panel: calendario de citas, historial por cliente e ingresos por trabajo.
 - Cloud Functions (aviso nativo de Firestore) si algún día se pasa al plan Blaze: en este
   volumen costaría $0, pero exige registrar una tarjeta.
+
+## Notificaciones push del panel en iPhone
+
+En iOS 16.4 o posterior, abre `/admin/` en Safari, usa **Compartir → Agregar a
+pantalla de inicio** y entra desde el icono. En **Configuración**, pulsa
+**Permitir avisos** y luego **Enviar prueba**. El sonido depende de los ajustes
+de notificaciones, silencio y concentración de iOS.
+
+El panel se suscribe con Web Push nativo. Un Cloudflare Worker de Appliance
+Solutions guarda las suscripciones en Workers KV y envía los avisos. Firebase
+puede seguir en Spark. Apps Script verifica en Firestore que la solicitud sea
+nueva antes de avisar al Worker. El aviso es genérico y no lleva datos del
+cliente. El flujo de Telegram sigue incluyendo intentos de pago y solicitudes
+que no se pudieron guardar.
+
+### Configuración del despliegue
+
+1. Crea un Worker de Appliance Solutions y un espacio KV para sus dispositivos.
+   En `push-relay/`, copia `wrangler.example.toml` a `wrangler.toml`, completa el
+   ID de KV y coloca la API key pública del proyecto Firebase y el UID de la
+   cuenta administradora de Firebase Authentication. La consulta de Firebase
+   Authentication debe estar permitida para esa API key desde el Worker.
+2. Genera un par VAPID P-256 propio. Guarda únicamente el JWK privado como
+   secreto `VAPID_PRIVATE_JWK` en el Worker. También configura el secreto
+   `PUSH_RELAY_SECRET`, un valor aleatorio de al menos 32 bytes. Despliega el
+   Worker con Wrangler. El endpoint `/public-key` deriva la parte pública.
+3. En Apps Script, añade `PUSH_RELAY_URL` y `PUSH_RELAY_SECRET` como propiedades
+   del script. Copia el código actualizado de `apps-script/Codigo.gs`. En el
+   manifiesto del proyecto, conserva los permisos actuales y añade
+   `https://www.googleapis.com/auth/datastore` a los ámbitos OAuth. Si antes
+   eran implícitos, conserva también los permisos que usa el script para
+   peticiones externas, correo y hojas de cálculo, según lo que esté activo.
+   La cuenta que ejecuta la aplicación web debe poder leer documentos en el
+   proyecto `yeanochoa-4b1c9` mediante IAM. Reautoriza y actualiza la
+   implementación existente a una versión nueva para conservar su URL.
+4. Escribe la URL HTTPS del Worker en `PANEL_PUSH_URL` de
+   `js/firebase-config.js` y añade su origen exacto a `connect-src` en
+   `admin/index.html`. Publica el sitio y verifica en un iPhone tanto el
+   botón **Enviar prueba** como una solicitud con el dispositivo bloqueado.
+
+No guardes claves privadas en el sitio ni reutilices las claves VAPID de DGP.
+
+## Agenda de citas
+
+En el panel, abre **Agenda de citas** para ver los turnos por día. Desde la
+solicitud, usa **Confirmar cita**, **Reprogramar cita** o **Cancelar cita**.
+El cliente acuerda la ventana con el administrador antes de la confirmación.
+Los turnos son 9–11, 11–1, 1–3 y 3–5, en horario de Memphis
+(`America/Chicago`). Reserva los últimos 15 minutos de cada bloque como
+margen operativo para traslados. El bloque completo se muestra al cliente.
+
+Publica `firestore.rules` antes de publicar el panel con esta función.
+Las reservas y las solicitudes se guardan en una transacción. La colección
+`appointmentSlots` impide confirmar dos citas para el mismo día y turno.
+Las solicitudes antiguas sin fecha siguen disponibles para agendar.

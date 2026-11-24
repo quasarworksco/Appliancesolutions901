@@ -128,6 +128,7 @@ function doPost(e) {
 
     avisar(datos.texto || 'Nueva solicitud en el sitio', datos.lead || {},
            datos.guardado !== false);
+    if (datos.tipo === 'solicitud' && datos.guardado === true) avisarPanelPush(datos.leadId);
     return ContentService.createTextOutput('ok');
 
   } catch (err) {
@@ -136,6 +137,52 @@ function doPost(e) {
   }
 }
 
+
+
+/* Verifica la creación en Firestore antes de convertir el aviso público en push. */
+function avisarPanelPush(id) {
+  if (typeof id !== 'string' || !/^[A-Za-z0-9]{20}$/.test(id)) return;
+  var config = PropertiesService.getScriptProperties();
+  var relay = config.getProperty('PUSH_RELAY_URL');
+  var secret = config.getProperty('PUSH_RELAY_SECRET');
+  if (!relay || !secret) return;
+
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) return;
+  try {
+    var cache = CacheService.getScriptCache();
+    var key = 'panel-push:' + id;
+    if (cache.get(key)) return;
+    var url = 'https://firestore.googleapis.com/v1/projects/yeanochoa-4b1c9/databases/(default)/documents/leads/'
+      + id + '?mask.fieldPaths=origen';
+    var documentResponse = UrlFetchApp.fetch(url, {
+      headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+      muteHttpExceptions: true
+    });
+    if (documentResponse.getResponseCode() !== 200) {
+      console.warn('No se verificó la solicitud para Web Push:', documentResponse.getResponseCode());
+      return;
+    }
+    var doc = JSON.parse(documentResponse.getContentText());
+    var age = Date.now() - Date.parse(doc.createTime);
+    if (!Number.isFinite(age) || age < -30000 || age > 5 * 60000
+        || doc.fields && doc.fields.origen && doc.fields.origen.stringValue === 'diagnostico') return;
+    var response = UrlFetchApp.fetch(relay.replace(/\/$/, '') + '/lead', {
+      method: 'post', contentType: 'application/json', followRedirects: false,
+      headers: { Authorization: 'Bearer ' + secret },
+      payload: JSON.stringify({ id: id }), muteHttpExceptions: true
+    });
+    if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+      cache.put(key, '1', 600);
+    } else {
+      console.warn('El Worker rechazó el aviso:', response.getResponseCode());
+    }
+  } catch (error) {
+    console.warn('No se pudo enviar el aviso Web Push:', error.name);
+  } finally {
+    lock.releaseLock();
+  }
+}
 
 /* Manda un texto tal cual al grupo y al correo, sin darle formato de solicitud */
 function avisarTextoSuelto(texto) {

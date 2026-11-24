@@ -1,0 +1,116 @@
+import { cifrarPush, firmaVapid, vapidPublica } from './web-push.mjs';
+
+const ORIGIN = 'https://appliancesolution901.com';
+const DEVICE_PREFIX = 'device:';
+const DEVICE_LIMIT = 20;
+
+function json(data, status = 200) {
+  return Response.json(data, { status, headers: {
+    'Access-Control-Allow-Origin': ORIGIN,
+    'Cache-Control': 'no-store'
+  } });
+}
+
+function validSubscription(sub) {
+  if (typeof sub?.endpoint !== 'string' || sub.endpoint.length > 2048) return false;
+  let url;
+  try { url = new URL(sub.endpoint); } catch { return false; }
+  const host = url.hostname;
+  const knownHost = host === 'fcm.googleapis.com' || host === 'updates.push.services.mozilla.com'
+    || host === 'web.push.apple.com' || /^[a-z0-9-]+\.push\.apple\.com$/.test(host);
+  return knownHost && url.protocol === 'https:' && !url.port && !url.username && !url.password
+    && !url.hash && /^[A-Za-z0-9_-]{87}$/.test(sub.keys?.p256dh)
+    && /^[A-Za-z0-9_-]{22}$/.test(sub.keys?.auth);
+}
+
+async function deviceKey(endpoint) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(endpoint));
+  return DEVICE_PREFIX + Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function isAdmin(request, env) {
+  const idToken = request.headers.get('Authorization')?.match(/^Bearer ([A-Za-z0-9_.-]+)$/)?.[1];
+  if (!idToken || !env.PUSH_ADMIN_UID || !env.FIREBASE_API_KEY) return false;
+  const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='
+    + encodeURIComponent(env.FIREBASE_API_KEY), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken })
+  });
+  if (!response.ok) return false;
+  const { users } = await response.json();
+  return users?.[0]?.localId === env.PUSH_ADMIN_UID && !users[0].disabled;
+}
+
+async function push(env, jwk, key, subscription, payload) {
+  if (!validSubscription(subscription)) return false;
+  const result = await fetch(subscription.endpoint, {
+    method: 'POST', redirect: 'error', headers: {
+      Authorization: await firmaVapid(jwk, subscription.endpoint),
+      'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream',
+      TTL: payload.kind === 'test' ? '120' : '3600', Urgency: 'high'
+    },
+    body: await cifrarPush(subscription, payload)
+  });
+  if (result.status === 404 || result.status === 410) await env.DEVICES.delete(key);
+  return result.ok;
+}
+
+async function handle(request, env) {
+  const route = new URL(request.url).pathname;
+  const origin = request.headers.get('Origin');
+  if (origin && origin !== ORIGIN) return json({ error: 'Origen inválido.' }, 403);
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: {
+    'Access-Control-Allow-Origin': ORIGIN,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type'
+  } });
+  if (!env.VAPID_PRIVATE_JWK) return json({ error: 'Falta configurar Web Push.' }, 503);
+  const jwk = JSON.parse(env.VAPID_PRIVATE_JWK);
+  if (route === '/public-key' && request.method === 'GET') return json({ key: vapidPublica(jwk) });
+  if (request.method !== 'POST' || !['/lead', '/enable', '/disable', '/test'].includes(route)) {
+    return json({ error: 'Ruta desconocida.' }, 404);
+  }
+  if (route === '/lead') {
+    const provided = request.headers.get('Authorization') || '';
+    const expected = 'Bearer ' + env.PUSH_RELAY_SECRET;
+    const encode = value => new TextEncoder().encode(value);
+    const [a, b] = await Promise.all([provided, expected].map(value => crypto.subtle.digest('SHA-256', encode(value))));
+    if (!env.PUSH_RELAY_SECRET || !crypto.subtle.timingSafeEqual(a, b)) return json({ error: 'Acceso denegado.' }, 403);
+    const { id } = await request.json();
+    if (typeof id !== 'string' || !/^[A-Za-z0-9]{20}$/.test(id)) return json({ error: 'Solicitud inválida.' }, 400);
+    const { keys } = await env.DEVICES.list({ prefix: DEVICE_PREFIX, limit: DEVICE_LIMIT });
+    const results = await Promise.allSettled(keys.map(async ({ name }) =>
+      push(env, jwk, name, await env.DEVICES.get(name, 'json'), { kind: 'lead', id })));
+    return json({ accepted: results.filter(result => result.status === 'fulfilled' && result.value).length });
+  }
+  if (!await isAdmin(request, env)) return json({ error: 'Entra con la cuenta autorizada del panel.' }, 403);
+  const { subscription } = await request.json();
+  if (!validSubscription(subscription)) return json({ error: 'Suscripción inválida.' }, 400);
+  const key = await deviceKey(subscription.endpoint);
+  if (route === '/enable') {
+    const devices = await env.DEVICES.list({ prefix: DEVICE_PREFIX, limit: DEVICE_LIMIT });
+    if (devices.keys.length >= DEVICE_LIMIT && !devices.keys.some(item => item.name === key)) {
+      return json({ error: 'Alcanzaste el límite de dispositivos.' }, 409);
+    }
+    await env.DEVICES.put(key, JSON.stringify({ endpoint: subscription.endpoint, keys: subscription.keys }));
+    return json({ ok: true });
+  }
+  if (route === '/disable') {
+    await env.DEVICES.delete(key);
+    return json({ ok: true });
+  }
+  // La prueba usa la suscripción del dispositivo actual. KV puede tardar en propagar un alta.
+  const rateKey = 'test:' + key;
+  if (await env.DEVICES.get(rateKey)) return json({ error: 'Espera un minuto entre pruebas.' }, 429);
+  await env.DEVICES.put(rateKey, '1', { expirationTtl: 60 });
+  if (!await push(env, jwk, key, subscription, { kind: 'test', id: String(Date.now()) })) {
+    return json({ error: 'El servicio push rechazó la prueba. Reactiva los avisos.' }, 502);
+  }
+  return json({ ok: true });
+}
+
+export default {
+  async fetch(request, env) {
+    try { return await handle(request, env); }
+    catch { return json({ error: 'No se pudo completar la operación de avisos.' }, 500); }
+  }
+};
