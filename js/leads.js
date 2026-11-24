@@ -13,6 +13,17 @@ const CDN = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK}`;
 
 let dbPromise = null;
 
+async function requestWebPush(id) {
+  try {
+    const response = await fetch(PANEL_PUSH_URL + '/new-request', {
+      method: 'POST', body: JSON.stringify({ id }), keepalive: true
+    });
+    if (!response.ok) console.warn('[AS901] El Worker rechazó el aviso:', response.status);
+  } catch {
+    console.warn('[AS901] El formulario no pudo contactar al Worker de avisos.');
+  }
+}
+
 async function getDb() {
   if (!dbPromise) {
     dbPromise = (async () => {
@@ -70,6 +81,7 @@ async function saveLead(datos) {
       } catch (error) {
         if (error.code !== 'permission-denied') throw error;
         // Durante el despliegue, las reglas anteriores todavía permiten guardar la solicitud.
+        console.warn('[AS901] Firestore no permitió crear el recibo del aviso.');
         await setDoc(lead, data);
       }
     } else {
@@ -77,12 +89,7 @@ async function saveLead(datos) {
     }
     leadId = lead.id;
     guardado = true;
-    if (pushReceipt) {
-      fetch(PANEL_PUSH_URL + '/new-request', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: leadId }), keepalive: true
-      }).catch(() => {});
-    }
+    if (pushReceipt) void requestWebPush(leadId);
   } catch (err) {
     console.error('[AS901] No se pudo guardar la solicitud en Firestore:', err);
   }

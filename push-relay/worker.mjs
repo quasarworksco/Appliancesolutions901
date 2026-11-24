@@ -77,7 +77,10 @@ async function handle(request, env) {
     if (route === '/new-request') {
       if (origin !== ORIGIN) return json({ error: 'Origen inválido.' }, 403);
       const receipt = await fetch(RECEIPT_URL + id, { redirect: 'manual' });
-      if (!receipt.ok) return json({ error: 'No se pudo verificar el recibo.' }, 403);
+      if (!receipt.ok) {
+        console.warn('Web Push receipt lookup rejected:', receipt.status);
+        return json({ error: 'No se pudo verificar el recibo.' }, 403);
+      }
       const doc = await receipt.json();
       const age = Date.now() - Date.parse(doc.fields?.createdAt?.timestampValue);
       if (!Number.isFinite(age) || age < -30000 || age > 300000) {
@@ -96,7 +99,9 @@ async function handle(request, env) {
     const { keys } = await env.DEVICES.list({ prefix: DEVICE_PREFIX, limit: DEVICE_LIMIT });
     const results = await Promise.allSettled(keys.map(async ({ name }) =>
       push(env, jwk, name, await env.DEVICES.get(name, 'json'), { kind: 'lead', id })));
-    return json({ accepted: results.filter(result => result.status === 'fulfilled' && result.value.ok).length });
+    const accepted = results.filter(result => result.status === 'fulfilled' && result.value.ok).length;
+    console.info('Web Push receipt verified:', { devices: keys.length, accepted });
+    return json({ accepted });
   }
   if (!await isAdmin(request, env)) return json({ error: 'Entra con la cuenta autorizada del panel.' }, 403);
   const { subscription } = await request.json();
