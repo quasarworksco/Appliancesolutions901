@@ -3,6 +3,7 @@ import { cifrarPush, firmaVapid, vapidPublica } from './web-push.mjs';
 const ORIGIN = 'https://appliancesolution901.com';
 const DEVICE_PREFIX = 'device:';
 const DEVICE_LIMIT = 20;
+const TEST_COOLDOWN_MS = 5000;
 
 function json(data, status = 200) {
   return Response.json(data, { status, headers: {
@@ -100,7 +101,10 @@ async function handle(request, env) {
   }
   // La prueba usa la suscripción del dispositivo actual. KV puede tardar en propagar un alta.
   const rateKey = 'test:' + key;
-  if (await env.DEVICES.get(rateKey)) return json({ error: 'Espera un minuto entre pruebas.' }, 429);
+  const lastTest = Number(await env.DEVICES.get(rateKey));
+  if (Date.now() - lastTest < TEST_COOLDOWN_MS) {
+    return json({ error: 'Espera cinco segundos entre pruebas.' }, 429);
+  }
   let delivery;
   try {
     delivery = await push(env, jwk, key, subscription, { kind: 'test', id: String(Date.now()) });
@@ -113,7 +117,7 @@ async function handle(request, env) {
     return json({ error: `El proveedor push rechazó la prueba (HTTP ${delivery.status}).${renew}` }, 502);
   }
   // Un problema al registrar el límite no convierte un envío aceptado en un error.
-  await env.DEVICES.put(rateKey, '1', { expirationTtl: 60 }).catch(error => {
+  await env.DEVICES.put(rateKey, String(Date.now()), { expirationTtl: 60 }).catch(error => {
     console.warn('Web Push cooldown was not saved:', error.name);
   });
   return json({ ok: true });
