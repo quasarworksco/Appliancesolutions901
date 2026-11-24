@@ -41,7 +41,7 @@ async function isAdmin(request, env) {
 }
 
 async function push(env, jwk, key, subscription, payload) {
-  if (!validSubscription(subscription)) return false;
+  if (!validSubscription(subscription)) return { ok: false, status: 400 };
   const result = await fetch(subscription.endpoint, {
     method: 'POST', redirect: 'error', headers: {
       Authorization: await firmaVapid(jwk, subscription.endpoint),
@@ -51,7 +51,7 @@ async function push(env, jwk, key, subscription, payload) {
     body: await cifrarPush(subscription, payload)
   });
   if (result.status === 404 || result.status === 410) await env.DEVICES.delete(key);
-  return result.ok;
+  return { ok: result.ok, status: result.status };
 }
 
 async function handle(request, env) {
@@ -80,7 +80,7 @@ async function handle(request, env) {
     const { keys } = await env.DEVICES.list({ prefix: DEVICE_PREFIX, limit: DEVICE_LIMIT });
     const results = await Promise.allSettled(keys.map(async ({ name }) =>
       push(env, jwk, name, await env.DEVICES.get(name, 'json'), { kind: 'lead', id })));
-    return json({ accepted: results.filter(result => result.status === 'fulfilled' && result.value).length });
+    return json({ accepted: results.filter(result => result.status === 'fulfilled' && result.value.ok).length });
   }
   if (!await isAdmin(request, env)) return json({ error: 'Entra con la cuenta autorizada del panel.' }, 403);
   const { subscription } = await request.json();
@@ -101,10 +101,21 @@ async function handle(request, env) {
   // La prueba usa la suscripción del dispositivo actual. KV puede tardar en propagar un alta.
   const rateKey = 'test:' + key;
   if (await env.DEVICES.get(rateKey)) return json({ error: 'Espera un minuto entre pruebas.' }, 429);
-  await env.DEVICES.put(rateKey, '1', { expirationTtl: 60 });
-  if (!await push(env, jwk, key, subscription, { kind: 'test', id: String(Date.now()) })) {
-    return json({ error: 'El servicio push rechazó la prueba. Reactiva los avisos.' }, 502);
+  let delivery;
+  try {
+    delivery = await push(env, jwk, key, subscription, { kind: 'test', id: String(Date.now()) });
+  } catch (error) {
+    console.warn('Web Push test failed before provider response:', error.name);
+    return json({ error: 'Cloudflare no pudo preparar o enviar la prueba (PUSH-TRANSPORT).' }, 502);
   }
+  if (!delivery.ok) {
+    const renew = [401, 403, 404, 410].includes(delivery.status) ? ' Pulsa Reactivar avisos y vuelve a probar.' : '';
+    return json({ error: `El proveedor push rechazó la prueba (HTTP ${delivery.status}).${renew}` }, 502);
+  }
+  // Un problema al registrar el límite no convierte un envío aceptado en un error.
+  await env.DEVICES.put(rateKey, '1', { expirationTtl: 60 }).catch(error => {
+    console.warn('Web Push cooldown was not saved:', error.name);
+  });
   return json({ ok: true });
 }
 

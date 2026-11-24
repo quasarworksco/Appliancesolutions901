@@ -7,7 +7,7 @@
    ========================================================= */
 import { firebaseConfig, FIREBASE_SDK, ADMIN_EMAIL_DOMAIN, LEADS_COLLECTION }
   from '../js/firebase-config.js';
-import { setupPanelPush } from './push.js?v=push-1';
+import { setupPanelPush } from './push.js?v=push-2';
 import { WINDOWS, centralToday, updateAppointment } from './appointments.js';
 
 const TURNOS = Object.entries(WINDOWS).sort(([a], [b]) => a.localeCompare(b));

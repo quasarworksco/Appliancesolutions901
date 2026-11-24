@@ -58,12 +58,18 @@ export function setupPanelPush(auth) {
       status.textContent = 'Permiso pendiente. Si lo bloqueaste, revisa Ajustes → Notificaciones.';
       return;
     }
-    const current = subscription || await manager.subscribe({
+    if (subscription) {
+      const old = subscription;
+      await old.unsubscribe();
+      subscription = null;
+      await call('/disable', old).catch(() => {});
+    }
+    const current = await manager.subscribe({
       userVisibleOnly: true, applicationServerKey: publicKey
     });
     try { await call('/enable', current); }
     catch (error) {
-      if (!subscription) await current.unsubscribe();
+      await current.unsubscribe();
       throw error;
     }
     subscription = current;
