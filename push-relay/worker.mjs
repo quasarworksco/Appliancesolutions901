@@ -44,7 +44,7 @@ async function isAdmin(request, env) {
 async function push(env, jwk, key, subscription, payload) {
   if (!validSubscription(subscription)) return { ok: false, status: 400 };
   const result = await fetch(subscription.endpoint, {
-    method: 'POST', redirect: 'error', headers: {
+    method: 'POST', redirect: 'manual', headers: {
       Authorization: await firmaVapid(jwk, subscription.endpoint),
       'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream',
       TTL: payload.kind === 'test' ? '120' : '3600', Urgency: 'high'
