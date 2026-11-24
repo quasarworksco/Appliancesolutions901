@@ -57,4 +57,4 @@ export const CALLMEBOT = {
 };
 
 // URL HTTPS del Worker Web Push, sin barra final.
-export const PANEL_PUSH_URL = '';
+export const PANEL_PUSH_URL = 'https://as901-panel-push.dgpgroupusa-llc.workers.dev';
