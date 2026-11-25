@@ -605,6 +605,12 @@ button,input,select,textarea{font:inherit;color:inherit;}
 @media (min-width:768px){
   .areas__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4rem;}
   .area-card{padding:1.6rem 1.5rem;}
+  /* con tres zonas, la ultima ocupa el ancho en vez de quedar sola a la izquierda */
+  .area-card:nth-child(3):last-child{grid-column:1 / -1;}
+}
+@media (min-width:1024px){
+  .areas__grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .area-card:nth-child(3):last-child{grid-column:auto;}
 }
 
 /* ---------- TESTIMONIOS (CARRUSEL) ---------- */

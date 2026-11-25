@@ -28,7 +28,7 @@ def alternate_urls(paths):
 
 
 def render_location(location, lang):
-    slug, name, place_type, nearby, english, spanish = location
+    slug, name, place_type, nearby, english, spanish, state, metro = location
     es = lang == "es"
     note = spanish if es else english
     home = "/es/" if es else "/"
@@ -36,7 +36,8 @@ def render_location(location, lang):
     paths = [location_path(slug, language) for language in LANGUAGES]
     alternates = alternate_urls(paths)
     url = alternates[lang]
-    area = f"{name}, Memphis, TN" if name != "Memphis" and place_type == "Place" else f"{name}, TN"
+    # "Place" solo para barrios dentro de la ciudad principal; los pueblos aparte van con su estado
+    area = f"{name}, {metro}, {state}" if place_type == "Place" else f"{name}, {state}"
     heading = f"Reparación de electrodomésticos en {area}" if es else f"Appliance Repair in {area}"
     title = heading + " | " + BUSINESS
     desc = (
@@ -52,7 +53,7 @@ def render_location(location, lang):
     ui = {
         "skip": ("Skip to main content", "Saltar al contenido"),
         "home": ("Home", "Inicio"),
-        "coverage": ("Memphis service area", "Cobertura de Memphis"),
+        "coverage": (f"{metro} service area", f"Cobertura de {metro}"),
         "request": ("Request service", "Solicitar servicio"),
         "call": ("Call 901-686-2035", "Llamar al 901-686-2035"),
         "services": ("Appliances we repair", "Electrodomésticos que reparamos"),
@@ -65,7 +66,7 @@ def render_location(location, lang):
         "pricing": ("View current service call pricing", "Consultar el precio de la visita"),
         "terms": ("Terms and conditions", "Términos y condiciones"),
         "nearby": ("Nearby service areas", "Otras zonas de servicio cercanas"),
-        "all_areas": ("View all Memphis-area communities", "Ver todas las zonas del área de Memphis"),
+        "all_areas": ("View all service areas", "Ver todas las zonas de servicio"),
         "details": ("Include your address, appliance type, brand and symptoms when requesting an appointment.", "Incluye tu dirección, tipo de equipo, marca y síntomas al solicitar la cita."),
     }
     copy = {key: pair[es] for key, pair in ui.items()}
@@ -116,7 +117,9 @@ def render_location(location, lang):
     other_label = "English" if es else "Español"
     area_data = {"@type": place_type, "name": name}
     if place_type == "Place":
-        area_data["containedInPlace"] = {"@type": "City", "name": "Memphis"}
+        area_data["containedInPlace"] = {"@type": "City", "name": metro, "addressRegion": state}
+    else:
+        area_data["addressRegion"] = state
     trail = [
         {"@type": "ListItem", "position": 1, "name": copy["home"], "item": ORIGIN + home},
         {"@type": "ListItem", "position": 2, "name": name, "item": url},
